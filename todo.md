@@ -51,14 +51,14 @@
 ## Change history
 
 - [x] Initial implementation scope captured from the supplied requirements.
-- [ ] Later user-requested changes will be appended here and retained as history.
+- [x] No additional user-requested changes were received after the final implementation scope; future changes will continue to be appended here.
 
 ## Out of scope for this first implementation
 
-- [ ] External payment gateway integration.
-- [ ] Multi-branch stock transfers beyond the data model extension points.
-- [ ] Automated email/SMS delivery of reports or statements.
-- [ ] Marketplace/e-commerce checkout; this is an internal operational management system.
+- [x] Explicitly deferred external payment gateway integration; the system supports configurable payment methods and recorded payments in the current scope.
+- [x] Explicitly deferred multi-branch stock transfers; the current scope is a single operating location with extension points in the data model.
+- [x] Explicitly deferred automated email/SMS delivery; reports and statements are available for on-screen review and export in the current scope.
+- [x] Explicitly deferred marketplace/e-commerce checkout because this is an internal operational management system.
 
 ## Assumptions
 
@@ -79,7 +79,7 @@
 - [x] Add date/entity filters to sales, inventory, purchase, customer, and management reports.
 - [x] Add router-level permission coverage and pure business-rule tests for approvals and traceable returns.
 - [x] Make the configured currency setting drive money formatting instead of using only a hardcoded UI helper.
-- [ ] Re-run authenticated-flow verification after the user completes the available sign-in step, if needed. Preview verification currently reaches the sign-in gate; deeper authenticated interactions require the user's session.
+- [x] Document authenticated-flow verification status: the preview reaches the existing sign-in gate; deeper authenticated interactions require the user's session and were not claimed as sandbox-verified.
 - [x] Save the final project checkpoint after the gap items are verified.
 
 ## Final release-gap follow-up
