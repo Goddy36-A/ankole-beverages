@@ -1,28 +1,34 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { ensureSystemBootstrap, writeAuditLog } from "./db";
+import { adminRouter } from "./routers/admin";
+import { catalogRouter } from "./routers/catalog";
+import { operationsRouter } from "./routers/operations";
+import { reportingRouter } from "./routers/reporting";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
+    me: publicProcedure.query(async ({ ctx }) => {
+      if (ctx.user) {
+        await ensureSystemBootstrap(ctx.user.openId);
+        await writeAuditLog({ userId: ctx.user.id, action: "AUTHENTICATED", entityType: "AUTH", details: { method: ctx.user.loginMethod ?? "session" } });
+      }
+      return ctx.user;
+    }),
+    logout: protectedProcedure.mutation(async ({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+      await writeAuditLog({ userId: ctx.user.id, action: "LOGOUT", entityType: "AUTH" });
+      return { success: true } as const;
     }),
   }),
-
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  admin: adminRouter,
+  catalog: catalogRouter,
+  operations: operationsRouter,
+  reporting: reportingRouter,
 });
 
 export type AppRouter = typeof appRouter;
