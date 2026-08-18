@@ -92,3 +92,11 @@
 ## GitHub export
 
 - [x] Create the private GitHub repository `ankole-beverages` under the authenticated account and push the current project.
+
+## Documentation export
+
+- [x] Write README.md and DEPLOYMENT.md and push to private GitHub repository.
+
+## Documentation push follow-up
+
+- [ ] Commit README.md and DEPLOYMENT.md and push to the private GitHub repository.
