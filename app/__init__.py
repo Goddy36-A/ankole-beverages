@@ -1,9 +1,13 @@
+import os
 from flask import Flask, render_template
-from app.config import Config
+from app.config import config as config_map
 from app.extensions import db, login_manager, migrate, csrf
 
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
+    if config_class is None:
+        env = os.environ.get('FLASK_ENV', 'development')
+        config_class = config_map.get(env, config_map['default'])
     app = Flask(__name__)
     app.config.from_object(config_class)
 
