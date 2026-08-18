@@ -2,10 +2,12 @@ services:
   - type: web
     name: ankole-beverages
     runtime: python
-    region: oregon           # closest to Uganda with free tier
+    region: oregon
     plan: free
+
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app --workers 2 --threads 2 --timeout 120
+    startCommand: gunicorn wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 120
+
     healthCheckPath: /auth/login
 
     envVars:
@@ -13,7 +15,7 @@ services:
         value: production
 
       - key: SECRET_KEY
-        generateValue: true   # Render auto-generates a secure random value
+        generateValue: true
 
       - key: DATABASE_URL
         fromDatabase:
