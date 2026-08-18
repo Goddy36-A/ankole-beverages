@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block page_title %}Stock Movements Report{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label small">From</label><input type="date" name="from" class="form-control form-control-sm" value="{{ from_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">To</label><input type="date" name="to" class="form-control form-control-sm" value="{{ to_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">Type</label>
+      <select name="type" class="form-select form-select-sm">
+        <option value="">All Types</option>
+        {% for t in movement_types %}<option value="{{ t }}" {% if mv_type == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3"><button class="btn btn-sm btn-primary">Filter</button></div>
+  </form>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>Date/Time</th><th>Product</th><th class="text-center">Type</th><th class="text-center">Qty</th><th>Reason</th><th>By</th></tr></thead>
+      <tbody>
+      {% for m in movements %}
+      <tr>
+        <td class="text-muted small">{{ m.created_at | short_dt }}</td>
+        <td class="fw-semibold small">{{ m.product.name }}</td>
+        <td class="text-center"><span class="badge {% if m.quantity > 0 %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} small">{{ m.movement_type }}</span></td>
+        <td class="text-center fw-bold {% if m.quantity > 0 %}text-success{% else %}text-danger{% endif %}">{{ '+' if m.quantity > 0 else '' }}{{ m.quantity }}</td>
+        <td class="text-muted small">{{ m.reason or '—' }}</td>
+        <td class="text-muted small">{{ m.performer.username }}</td>
+      </tr>
+      {% else %}<tr><td colspan="6" class="text-center py-4 text-muted">No movements found</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

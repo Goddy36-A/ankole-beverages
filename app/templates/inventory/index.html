@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block page_title %}Inventory{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3 gap-2">
+  <a href="{{ url_for('inventory.request_adjustment') }}" class="btn btn-sm btn-outline-warning">Request Adjustment</a>
+  <a href="{{ url_for('inventory.record_loss') }}" class="btn btn-sm btn-outline-danger">Record Loss / Damage</a>
+  <a href="{{ url_for('inventory.new_count') }}" class="btn btn-sm btn-outline-primary">Stock Count</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th class="text-center">Stock</th><th class="text-center">Reorder Level</th><th class="text-end">Stock Value</th><th>Stock Status</th></tr></thead>
+      <tbody>
+      {% for p in products %}
+      <tr>
+        <td class="text-muted small">{{ p.sku }}</td>
+        <td class="fw-semibold">{{ p.name }}</td>
+        <td class="small">{{ p.category.name }}</td>
+        <td class="text-center fw-bold {% if p.current_stock == 0 %}text-danger{% elif p.is_low_stock %}text-warning{% else %}text-success{% endif %}">{{ p.current_stock }}</td>
+        <td class="text-center text-muted">{{ p.reorder_level }}</td>
+        <td class="text-end small">{{ p.stock_value | ugx }}</td>
+        <td>
+          {% if p.current_stock == 0 %}
+            <span class="badge bg-danger-subtle text-danger">Out of stock</span>
+          {% elif p.is_low_stock %}
+            <span class="badge bg-warning-subtle text-warning">Low stock</span>
+          {% else %}
+            <span class="badge bg-success-subtle text-success">OK</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center py-4 text-muted">No products in inventory</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

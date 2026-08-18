@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block page_title %}Stock Adjustments{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('inventory.request_adjustment') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>Request Adjustment</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Reference</th><th>Product</th><th class="text-center">Type</th><th class="text-center">Qty</th><th>Reason</th><th class="text-center">Status</th><th>Requested By</th><th>Date</th><th></th></tr></thead>
+      <tbody>
+      {% for a in adjustments %}
+      <tr>
+        <td class="fw-semibold small">{{ a.adjustment_number }}</td>
+        <td>{{ a.product.name }}</td>
+        <td class="text-center"><span class="badge {% if a.adjustment_type == 'IN' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %}">{{ a.adjustment_type }}</span></td>
+        <td class="text-center fw-bold">{{ a.quantity }}</td>
+        <td class="small text-muted">{{ a.reason[:50] }}{% if a.reason | length > 50 %}…{% endif %}</td>
+        <td class="text-center"><span class="badge badge-{{ a.status | lower }} rounded-pill">{{ a.status }}</span></td>
+        <td class="small text-muted">{{ a.requester.username }}</td>
+        <td class="small text-muted">{{ a.created_at | short_date }}</td>
+        <td>
+          {% if a.status == 'PENDING' and current_user.has_permission('inventory.adjust.approve') %}
+          <form method="POST" action="{{ url_for('inventory.approve_adjustment', id=a.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-xs btn-success py-0 px-2 me-1" style="font-size:11px" onclick="return confirm('Approve this adjustment?')">✓</button>
+          </form>
+          <form method="POST" action="{{ url_for('inventory.reject_adjustment', id=a.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-xs btn-danger py-0 px-2" style="font-size:11px">✗</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" class="text-center py-4 text-muted">No adjustments</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

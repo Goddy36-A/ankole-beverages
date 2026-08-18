@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block page_title %}Purchase Return — {{ purchase.purchase_number }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="form-card">
+  <h5 class="fw-semibold mb-4">Return Items to Supplier — {{ purchase.purchase_number }}</h5>
+  <form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3"><label class="form-label">Reason *</label><textarea name="reason" class="form-control" rows="2" required placeholder="Minimum 5 characters"></textarea></div>
+    <div class="table-responsive mb-3">
+      <table class="table table-sm">
+        <thead><tr><th>Product</th><th class="text-center">Received</th><th class="text-center">Return Qty</th></tr></thead>
+        <tbody>{% for i in items %}<tr><td>{{ i.product.name }}</td><td class="text-center">{{ i.quantity }}</td><td class="text-center"><input type="number" name="qty_{{ i.id }}" class="form-control form-control-sm text-center" min="0" max="{{ i.quantity }}" value="0" style="width:80px;margin:auto"></td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-warning">Process Return</button>
+      <a href="{{ url_for('purchases.detail', id=purchase.id) }}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div></div></div>
+{% endblock %}

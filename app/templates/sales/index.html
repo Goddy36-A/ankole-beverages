@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block page_title %}Sales{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('sales.new_sale') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Sale</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Invoice</th><th>Customer</th><th>Type</th><th class="text-end">Total</th><th class="text-end">Paid</th><th class="text-end">Balance</th><th>Date</th><th>By</th><th></th></tr></thead>
+      <tbody>
+      {% for s in sales %}
+      <tr>
+        <td class="fw-semibold"><a href="{{ url_for('sales.detail', id=s.id) }}" class="text-decoration-none">{{ s.invoice_number }}</a></td>
+        <td>{{ s.customer.name }}</td>
+        <td><span class="badge badge-{{ s.sale_type | lower }} rounded-pill">{{ s.sale_type }}</span></td>
+        <td class="text-end">{{ s.total_amount | ugx }}</td>
+        <td class="text-end">{{ s.amount_paid | ugx }}</td>
+        <td class="text-end {% if s.balance > 0 %}text-danger fw-semibold{% endif %}">{{ s.balance | ugx }}</td>
+        <td class="text-muted small">{{ s.created_at | short_date }}</td>
+        <td class="text-muted small">{{ s.creator.username }}</td>
+        <td><a href="{{ url_for('sales.detail', id=s.id) }}" class="btn btn-sm btn-outline-primary py-0">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" class="text-center py-4 text-muted">No sales yet. <a href="{{ url_for('sales.new_sale') }}">Create one</a></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

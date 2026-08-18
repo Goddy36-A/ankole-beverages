@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block page_title %}{% if supplier %}Edit Supplier{% else %}New Supplier{% endif %}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+<div class="form-card">
+  <h5 class="fw-semibold mb-4">{% if supplier %}Edit Supplier{% else %}New Supplier{% endif %}</h5>
+  <form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row g-3">
+      <div class="col-12"><label class="form-label">Name *</label><input type="text" name="name" class="form-control" value="{{ supplier.name if supplier else '' }}" required></div>
+      <div class="col-md-6"><label class="form-label">Contact Person</label><input type="text" name="contact_person" class="form-control" value="{{ supplier.contact_person or '' if supplier else '' }}"></div>
+      <div class="col-md-6"><label class="form-label">Telephone</label><input type="text" name="telephone" class="form-control" value="{{ supplier.telephone or '' if supplier else '' }}"></div>
+      <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ supplier.email or '' if supplier else '' }}"></div>
+      <div class="col-md-6"><label class="form-label">Location</label><input type="text" name="location" class="form-control" value="{{ supplier.location or '' if supplier else '' }}"></div>
+      <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2">{{ supplier.address or '' if supplier else '' }}</textarea></div>
+      <div class="col-md-6"><label class="form-label">Tax/Business Number</label><input type="text" name="tax_number" class="form-control" value="{{ supplier.tax_number or '' if supplier else '' }}"></div>
+      <div class="col-md-6"><label class="form-label">Payment Terms</label><input type="text" name="payment_terms" class="form-control" value="{{ supplier.payment_terms or '' if supplier else '' }}" placeholder="e.g. Net 30"></div>
+      {% if supplier %}<div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" value="1" {% if supplier.is_active %}checked{% endif %}><label class="form-check-label">Active</label></div></div>{% endif %}
+    </div>
+    <div class="d-flex gap-2 mt-4"><button class="btn btn-primary">Save</button><a href="{{ url_for('suppliers.index') }}" class="btn btn-outline-secondary">Cancel</a></div>
+  </form>
+</div></div></div>
+{% endblock %}

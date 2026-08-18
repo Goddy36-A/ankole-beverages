@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block page_title %}Inventory Report{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" name="low_only" value="1" id="lowOnly" {% if low_only %}checked{% endif %}>
+        <label class="form-check-label" for="lowOnly">Low stock only</label>
+      </div>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button class="btn btn-sm btn-primary">Filter</button>
+      <a href="{{ url_for('reports.inventory_report', **request.args, export='csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
+    </div>
+  </form>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Products Shown</div><div class="kpi-value">{{ products | length }}</div></div></div>
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Total Stock Value</div><div class="kpi-value" style="font-size:16px">{{ total_value | ugx }}</div></div></div>
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Low/Out of Stock</div><div class="kpi-value text-warning">{{ products | selectattr('is_low_stock') | list | length }}</div></div></div>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th class="text-center">Stock</th><th class="text-center">Reorder</th><th class="text-end">Cost Price</th><th class="text-end">Stock Value</th><th class="text-center">Status</th></tr></thead>
+      <tbody>
+      {% for p in products %}
+      <tr>
+        <td class="text-muted small">{{ p.sku }}</td>
+        <td class="fw-semibold small">{{ p.name }}</td>
+        <td class="small">{{ p.category.name }}</td>
+        <td class="text-center fw-bold {% if p.current_stock == 0 %}text-danger{% elif p.is_low_stock %}text-warning{% else %}text-success{% endif %}">{{ p.current_stock }}</td>
+        <td class="text-center text-muted">{{ p.reorder_level }}</td>
+        <td class="text-end small">{{ p.cost_price | ugx }}</td>
+        <td class="text-end small fw-semibold">{{ p.stock_value | ugx }}</td>
+        <td class="text-center">
+          {% if p.current_stock == 0 %}<span class="badge bg-danger-subtle text-danger small">Out</span>
+          {% elif p.is_low_stock %}<span class="badge bg-warning-subtle text-warning small">Low</span>
+          {% else %}<span class="badge bg-success-subtle text-success small">OK</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

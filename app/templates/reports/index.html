@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="row g-3">
+  {% set report_cards = [
+    ("Sales Reports", "bi-receipt", "primary", [
+      ("Daily / Range Sales",  "reports.sales_report",       "Sales by date range, customer, payment method"),
+      ("Customer Balances",    "reports.customer_balances",  "Outstanding credit balances"),
+      ("Stock Movements",      "reports.movements_report",   "Full inventory movement ledger"),
+    ]),
+    ("Inventory Reports", "bi-stack", "success", [
+      ("Current Inventory",    "reports.inventory_report",   "Stock levels and valuation"),
+      ("Low Stock",            "reports.inventory_report",   "Products below reorder level"),
+    ]),
+    ("Purchase Reports", "bi-cart-plus", "warning", [
+      ("Purchase History",     "reports.purchase_report",    "Purchases by date or supplier"),
+    ]),
+    ("Audit & Logs", "bi-shield-check", "danger", [
+      ("Audit Log",            "reports.audit_logs",         "User activity and system changes"),
+    ]),
+  ] %}
+  {% for title, icon, color, links in report_cards %}
+  <div class="col-md-6">
+    <div class="table-card">
+      <div class="table-card-header">
+        <i class="bi {{ icon }} text-{{ color }} me-2"></i>{{ title }}
+      </div>
+      <div class="list-group list-group-flush">
+        {% for label, endpoint, desc in links %}
+        <a href="{{ url_for(endpoint) }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3">
+          <div class="kpi-icon" style="background:var(--bs-{{ color }}-bg-subtle);min-width:36px;height:36px;font-size:15px">
+            <i class="bi {{ icon }} text-{{ color }}"></i>
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ label }}</div>
+            <div class="text-muted" style="font-size:12px">{{ desc }}</div>
+          </div>
+          <i class="bi bi-chevron-right ms-auto text-muted"></i>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

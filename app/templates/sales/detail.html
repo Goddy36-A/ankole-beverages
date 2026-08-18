@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block page_title %}Sale {{ sale.invoice_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <a href="{{ url_for('sales.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+  <div class="d-flex gap-2">
+    {% if sale.balance > 0 %}
+    <a href="{{ url_for('payments.record_payment', sale_id=sale.id) }}" class="btn btn-sm btn-success">Record Payment</a>
+    {% endif %}
+    {% if sale.status == "COMPLETED" %}
+    <a href="{{ url_for('sales.create_return', id=sale.id) }}" class="btn btn-sm btn-outline-warning">Process Return</a>
+    {% endif %}
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="table-card">
+      <div class="table-card-header">
+        <i class="bi bi-receipt me-2"></i>{{ sale.invoice_number }}
+        <span class="badge badge-{{ sale.status | lower }} ms-2 rounded-pill">{{ sale.status }}</span>
+        <span class="badge badge-{{ sale.sale_type | lower }} ms-1 rounded-pill">{{ sale.sale_type }}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Product</th><th class="text-center">Qty</th><th class="text-end">Unit Price</th><th class="text-end">Total</th><th class="text-center">Returned</th></tr></thead>
+          <tbody>
+          {% for i in items %}
+          <tr>
+            <td>{{ i.product.name }} <span class="text-muted small">{{ i.product.sku }}</span></td>
+            <td class="text-center">{{ i.quantity }}</td>
+            <td class="text-end">{{ i.unit_price | ugx }}</td>
+            <td class="text-end fw-semibold">{{ i.line_total | ugx }}</td>
+            <td class="text-center text-muted">{{ i.returned_quantity }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="table-light"><td colspan="3" class="text-end fw-semibold">Subtotal</td><td class="text-end">{{ sale.subtotal | ugx }}</td><td></td></tr>
+            {% if sale.discount %}<tr><td colspan="3" class="text-end text-muted">Discount</td><td class="text-end text-danger">- {{ sale.discount | ugx }}</td><td></td></tr>{% endif %}
+            {% if sale.tax %}<tr><td colspan="3" class="text-end text-muted">Tax</td><td class="text-end">{{ sale.tax | ugx }}</td><td></td></tr>{% endif %}
+            <tr class="table-primary"><td colspan="3" class="text-end fw-bold">Grand Total</td><td class="text-end fw-bold">{{ sale.total_amount | ugx }}</td><td></td></tr>
+            <tr><td colspan="3" class="text-end text-muted">Amount Paid</td><td class="text-end text-success fw-semibold">{{ sale.amount_paid | ugx }}</td><td></td></tr>
+            <tr><td colspan="3" class="text-end text-muted">Balance Due</td><td class="text-end {% if sale.balance > 0 %}text-danger fw-bold{% endif %}">{{ sale.balance | ugx }}</td><td></td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-card mb-3">
+      <h6 class="fw-semibold mb-3">Sale Info</h6>
+      <div class="small text-muted mb-1">Customer</div>
+      <div class="fw-semibold mb-2">{{ sale.customer.name }}</div>
+      <div class="small text-muted mb-1">Date</div>
+      <div class="mb-2">{{ sale.created_at | short_dt }}</div>
+      <div class="small text-muted mb-1">Created by</div>
+      <div class="mb-2">{{ sale.creator.username }}</div>
+      {% if sale.due_date %}<div class="small text-muted mb-1">Due Date</div><div class="mb-2 {% if sale.due_date < now %}text-danger{% endif %}">{{ sale.due_date | short_date }}</div>{% endif %}
+      {% if sale.notes %}<div class="small text-muted mb-1">Notes</div><div class="small">{{ sale.notes }}</div>{% endif %}
+    </div>
+    {% if payments %}
+    <div class="form-card">
+      <h6 class="fw-semibold mb-3">Payments</h6>
+      {% for p in payments %}
+      <div class="d-flex justify-content-between small mb-1">
+        <span>{{ p.payment_method.name }}</span>
+        <span class="fw-semibold text-success">{{ p.amount | ugx }}</span>
+      </div>
+      <div class="text-muted" style="font-size:11px">{{ p.receipt_number }} · {{ p.created_at | short_date }}</div>
+      {% if not loop.last %}<hr class="my-2">{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>const now = new Date();</script>{% endblock %}

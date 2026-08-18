@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block page_title %}Roles & Permissions{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <a href="{{ url_for('admin.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Users</a>
+  <a href="{{ url_for('admin.new_role') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Role</a>
+</div>
+<div class="row g-3">
+  {% for role in roles %}
+  <div class="col-md-6">
+    <div class="table-card">
+      <div class="table-card-header">
+        <i class="bi bi-shield me-2 text-primary"></i>{{ role.name }}
+        {% if role.is_active %}<span class="badge bg-success-subtle text-success ms-2 small">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary ms-2 small">Inactive</span>{% endif %}
+        <a href="{{ url_for('admin.edit_role', id=role.id) }}" class="btn btn-sm btn-outline-primary py-0 ms-auto">Edit</a>
+      </div>
+      <div class="p-3">
+        {% if role.description %}<p class="text-muted small mb-2">{{ role.description }}</p>{% endif %}
+        <div class="d-flex flex-wrap gap-1">
+          {% for rp in role.role_permissions %}
+          <span class="badge bg-light text-secondary border" style="font-size:11px">{{ rp.permission.code }}</span>
+          {% else %}
+          <span class="text-muted small">No permissions assigned</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

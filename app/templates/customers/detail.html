@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block page_title %}{{ customer.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <a href="{{ url_for('customers.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+  <a href="{{ url_for('customers.edit_customer', id=customer.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+</div>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="form-card mb-3">
+      <h6 class="fw-semibold mb-3">Customer Details</h6>
+      <div class="small text-muted">Number</div><div class="mb-2">{{ customer.customer_number }}</div>
+      <div class="small text-muted">Type</div><div class="mb-2">{{ customer.customer_type }}</div>
+      <div class="small text-muted">Phone</div><div class="mb-2">{{ customer.telephone or '—' }}</div>
+      <div class="small text-muted">Email</div><div class="mb-2">{{ customer.email or '—' }}</div>
+      <div class="small text-muted">Address</div><div class="mb-2 small">{{ customer.address or '—' }}</div>
+      <hr>
+      <div class="small text-muted">Credit Limit</div><div class="mb-2 fw-semibold">{{ customer.credit_limit | ugx }}</div>
+      <div class="small text-muted">Outstanding Balance</div>
+      <div class="fw-bold {% if customer.outstanding_balance > 0 %}text-danger{% else %}text-success{% endif %}">{{ customer.outstanding_balance | ugx }}</div>
+    </div>
+    <a href="{{ url_for('reports.customer_statement', id=customer.id) }}" class="btn btn-sm btn-outline-primary w-100">View Statement</a>
+  </div>
+  <div class="col-md-8">
+    <div class="table-card mb-3">
+      <div class="table-card-header"><i class="bi bi-receipt me-2"></i>Recent Sales</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead><tr><th>Invoice</th><th class="text-end">Total</th><th class="text-end">Paid</th><th class="text-end">Balance</th><th>Date</th></tr></thead>
+          <tbody>{% for s in sales %}<tr><td><a href="{{ url_for('sales.detail', id=s.id) }}" class="text-decoration-none">{{ s.invoice_number }}</a></td><td class="text-end">{{ s.total_amount | ugx }}</td><td class="text-end">{{ s.amount_paid | ugx }}</td><td class="text-end {% if s.balance > 0 %}text-danger{% endif %}">{{ s.balance | ugx }}</td><td class="text-muted small">{{ s.created_at | short_date }}</td></tr>{% else %}<tr><td colspan="5" class="text-center py-3 text-muted">No sales</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-cash-stack me-2"></i>Recent Payments</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead><tr><th>Receipt</th><th>Method</th><th class="text-end">Amount</th><th>Date</th></tr></thead>
+          <tbody>{% for p in payments %}<tr><td>{{ p.receipt_number }}</td><td>{{ p.payment_method.name }}</td><td class="text-end text-success fw-semibold">{{ p.amount | ugx }}</td><td class="text-muted small">{{ p.created_at | short_date }}</td></tr>{% else %}<tr><td colspan="4" class="text-center py-3 text-muted">No payments</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

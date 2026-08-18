@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block page_title %}{% if role %}Edit Role{% else %}New Role{% endif %}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="form-card">
+  <h5 class="fw-semibold mb-4">{% if role %}Edit Role: {{ role.name }}{% else %}New Role{% endif %}</h5>
+  <form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3"><label class="form-label">Role Name *</label><input type="text" name="name" class="form-control" value="{{ role.name if role else '' }}" required></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2">{{ role.description or '' if role else '' }}</textarea></div>
+    {% if role %}
+    <div class="mb-3">
+      <div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" value="1" {% if role.is_active %}checked{% endif %}><label class="form-check-label">Active</label></div>
+    </div>
+    {% endif %}
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Permissions</label>
+      <div class="row g-2 mt-1">
+        {% for perm in all_perms %}
+        <div class="col-md-6">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="permissions" value="{{ perm.id }}"
+                   id="perm-{{ perm.id }}" {% if perm.id in role_perm_ids %}checked{% endif %}>
+            <label class="form-check-label small" for="perm-{{ perm.id }}">
+              <span class="fw-semibold">{{ perm.code }}</span>
+              {% if perm.description %}<br><span class="text-muted" style="font-size:11px">{{ perm.description }}</span>{% endif %}
+            </label>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary">Save Role</button>
+      <a href="{{ url_for('admin.roles') }}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div></div></div>
+{% endblock %}

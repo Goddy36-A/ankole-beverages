@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page_title %}Purchase Orders{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('purchases.new_purchase') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Purchase</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>PO #</th><th>Supplier</th><th>Invoice #</th><th class="text-end">Total</th><th class="text-center">Status</th><th>Date</th><th></th></tr></thead>
+      <tbody>
+      {% for p in purchases %}
+      <tr>
+        <td class="fw-semibold"><a href="{{ url_for('purchases.detail', id=p.id) }}" class="text-decoration-none">{{ p.purchase_number }}</a></td>
+        <td>{{ p.supplier.name }}</td>
+        <td class="text-muted small">{{ p.invoice_number or '—' }}</td>
+        <td class="text-end">{{ p.total_amount | ugx }}</td>
+        <td class="text-center"><span class="badge badge-{{ p.status | lower }} rounded-pill">{{ p.status }}</span></td>
+        <td class="text-muted small">{{ p.created_at | short_date }}</td>
+        <td><a href="{{ url_for('purchases.detail', id=p.id) }}" class="btn btn-sm btn-outline-primary py-0">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center py-4 text-muted">No purchase orders yet</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

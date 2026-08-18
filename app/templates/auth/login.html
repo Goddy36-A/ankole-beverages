@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg,#1a1f2e 0%,#252d3d 100%);">
+  <div style="width: 100%; max-width: 420px; padding: 16px;">
+    <div class="text-center mb-4">
+      <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+           style="width:60px;height:60px;background:#3b82f6;border-radius:14px;font-size:28px;color:#fff;">
+        <i class="bi bi-droplet-half"></i>
+      </div>
+      <h1 class="text-white fw-bold fs-4 mb-1">Ankole Soft Drinks Ltd</h1>
+      <p class="text-secondary small">Buhweju District — Inventory &amp; Sales System</p>
+    </div>
+
+    <div class="card border-0 shadow-lg" style="border-radius:16px;">
+      <div class="card-body p-4">
+        <h5 class="fw-semibold mb-4 text-center">Sign in to your account</h5>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} py-2 small">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Username</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+              {{ form.username(class="form-control border-start-0", placeholder="Enter username") }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+              {{ form.password(class="form-control border-start-0", placeholder="Enter password") }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="form-check">
+              {{ form.remember_me(class="form-check-input") }}
+              <label class="form-check-label small">{{ form.remember_me.label.text }}</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+    <p class="text-center text-secondary small mt-3">
+      Default credentials: <code class="text-light">admin / Admin@1234</code>
+    </p>
+  </div>
+</div>
+{% endblock %}

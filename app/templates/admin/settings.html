@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block page_title %}System Settings{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="form-card">
+      <h6 class="fw-semibold mb-3">Add / Update Setting</h6>
+      <form method="POST" action="{{ url_for('admin.save_setting') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3"><label class="form-label">Key *</label><input type="text" name="setting_key" class="form-control" placeholder="e.g. currency, company_name" required></div>
+        <div class="mb-3"><label class="form-label">Value *</label><input type="text" name="setting_value" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+        <button class="btn btn-primary w-100">Save Setting</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-gear me-2"></i>Current Settings</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead><tr><th>Key</th><th>Value</th><th>Description</th><th>Updated</th></tr></thead>
+          <tbody>
+          {% for s in settings %}
+          <tr>
+            <td class="fw-semibold small font-monospace">{{ s.setting_key }}</td>
+            <td class="small">{{ s.setting_value }}</td>
+            <td class="text-muted small">{{ s.description or '—' }}</td>
+            <td class="text-muted small">{{ s.updated_at | short_date }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-center py-3 text-muted">No settings yet</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

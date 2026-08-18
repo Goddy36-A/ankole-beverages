@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block page_title %}Customers{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <form class="d-flex gap-2" method="GET"><input class="form-control form-control-sm" name="q" value="{{ search }}" placeholder="Search…" style="width:220px"><button class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button></form>
+  <a href="{{ url_for('customers.new_customer') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Customer</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Number</th><th>Name</th><th>Type</th><th>Phone</th><th class="text-end">Credit Limit</th><th class="text-end">Outstanding</th><th class="text-center">Status</th><th></th></tr></thead>
+      <tbody>
+      {% for c in customers %}
+      <tr>
+        <td class="text-muted small">{{ c.customer_number }}</td>
+        <td class="fw-semibold"><a href="{{ url_for('customers.detail', id=c.id) }}" class="text-decoration-none">{{ c.name }}</a></td>
+        <td class="small">{{ c.customer_type }}</td>
+        <td class="small">{{ c.telephone or '—' }}</td>
+        <td class="text-end small">{{ c.credit_limit | ugx }}</td>
+        <td class="text-end small {% if c.outstanding_balance > 0 %}text-danger fw-semibold{% endif %}">{{ c.outstanding_balance | ugx }}</td>
+        <td class="text-center">{% if c.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</td>
+        <td><a href="{{ url_for('customers.edit_customer', id=c.id) }}" class="btn btn-sm btn-outline-primary py-0">Edit</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="text-center py-4 text-muted">No customers found</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

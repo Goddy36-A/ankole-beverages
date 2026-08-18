@@ -1,55 +1,132 @@
-# Ankole Soft Drinks Beverage Inventory and Sales Management System
+# Ankole Soft Drinks Ltd — Inventory & Sales Management System
 
-Ankole Soft Drinks Ltd is a robust, production-grade inventory and sales management web application built for beverage manufacturing and distribution operations. The system is designed with a professional architectural blueprint aesthetic featuring a deep royal blue background, precise technical grid linework, and high-contrast typography [1].
-
-## Architectural Overview
-
-The application is structured around a modular monorepo stack combining React 19, Tailwind CSS, and shadcn/ui on the frontend with an Express and tRPC backend backed by a TiDB/MySQL database managed via Drizzle ORM. All critical calculations—including multi-item totals, tax, discounts, credit exposure, and stock availability—are computed strictly on the server to prevent client-side manipulation [2].
-
-| Layer | Technologies & Frameworks | Key Responsibilities |
-|---|---|---|
-| **Client** | React 19, TypeScript, Wouter, Tailwind CSS, shadcn/ui, Lucide Icons | Blueprint dashboard, interactive sales counter, catalog master data, inventory controls, customer statements, and filtered reports |
-| **Server** | Node.js, Express, tRPC 11, Zod validation | Role-based permission enforcement, server-side sales and purchasing transactions, audit logging, and automated business rules |
-| **Database** | TiDB / MySQL, Drizzle ORM | Normalized relational tables for users, roles, permissions, products, suppliers, customers, purchase orders, sales invoices, payments, stock movements, and audit history |
-
-## Core Functional Modules
-
-The system provides comprehensive coverage across the operational workflow of a beverage enterprise [3]:
-
-1. **Role-Based Access Control (RBAC)**: Configurable roles for Administrators, Managers, Sales Officers, and Storekeepers. Every procedure is gated by granular server-side permission checks.
-2. **Catalog & Master Data**: Management of products (SKUs, cost/selling prices, reorder thresholds, expiry tracking flags), categories, units of measure, packaging types, and configurable payment methods.
-3. **Partner Management**: Comprehensive customer profiles with credit limits, payment terms, and outstanding/overdue balances alongside vendor records for suppliers.
-4. **Purchasing & Receiving**: End-to-end purchase order creation, goods receipt confirmation, and automated stock-in movement generation that updates authoritative inventory levels.
-5. **Sales & Credit Control**: Multi-item point-of-sale composer enforcing active product states, sufficient stock availability, and strict customer credit limits. Generates printable invoices and receipts.
-6. **Stock Control & Adjustments**: Authoritative stock ledgers tracking movements, low-stock watchlist alerts, expiration tracking, damage/loss recording, and manager-approved stock adjustments.
-7. **Traceable Returns**: Sales and purchase returns that require referencing an original completed transaction, restoring inventory eligibility, and adjusting customer credit exposure.
-8. **Reports & Exports**: Filterable date-range and entity reports for sales, inventory valuations, purchase activity, customer statements, overdue invoices, and CSV/Excel exports.
-9. **Audit Trail**: Immutable logging of authentication lifecycles, administrative changes, master data updates, inventory adjustments, and financial transactions.
-
-## Development Workflow
-
-To set up and run the project locally in development mode:
-
-```bash
-# Install dependencies
-pnpm install
-
-# Push database schema migrations
-pnpm drizzle-kit generate
-pnpm drizzle-kit migrate
-
-# Run development server
-pnpm dev
-
-# Run unit and integration tests
-pnpm test
-```
-
-## References
-
-[1] Ankole Soft Drinks Ltd Technical Architecture Blueprint, Internal Engineering Documentation, 2026.  
-[2] tRPC and Server-Side Validation Architecture Guidelines, Manus Engineering Standards, 2026.  
-[3] Operational Requirements for Beverage Manufacturing and Distribution Systems, East African Commerce Standards, 2025.
+A complete, production-grade web application built with **Python Flask + SQLite3** for Ankole Soft Drinks Ltd, Buhweju District, Uganda.
 
 ---
-Author: **Manus AI**
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Flask 3.1 (Application Factory + Blueprints) |
+| Database | SQLite3 via SQLAlchemy ORM |
+| Auth | Local username/password — Flask-Login + Werkzeug |
+| CSRF | Flask-WTF |
+| Migrations | Flask-Migrate / Alembic |
+| UI | Bootstrap 5.3 + Bootstrap Icons |
+| Server-side validation | Python / WTForms |
+
+---
+
+## Quick Start
+
+```bash
+# 1. Clone
+git clone https://github.com/Goddy36-A/ankole-beverages.git
+cd ankole-beverages
+
+# 2. Virtual environment
+python -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Environment file
+cp .env.example .env              # Edit SECRET_KEY for production
+
+# 5. Run
+python run.py
+```
+
+Visit: **http://localhost:5000**
+
+Default login: `admin` / `Admin@1234` *(change immediately in production)*
+
+---
+
+## Modules
+
+| Module | URL | Description |
+|---|---|---|
+| Dashboard | `/` | KPIs, low stock, recent activity |
+| Products | `/products/` | Products, categories, units |
+| Inventory | `/inventory/` | Stock levels, movements, adjustments, counts |
+| Purchases | `/purchases/` | Purchase orders, receiving, returns |
+| Sales | `/sales/` | Sales with multi-item POS form, returns |
+| Customers | `/customers/` | Customer management, statements |
+| Suppliers | `/suppliers/` | Supplier management, purchase history |
+| Payments | `/payments/` | Payment recording, methods |
+| Reports | `/reports/` | Sales, inventory, purchase, customer reports + CSV export |
+| Admin | `/admin/` | Users, roles, permissions, settings |
+
+---
+
+## Business Rules Enforced (Server-Side)
+
+| Rule | Description |
+|---|---|
+| BR-001 | Cannot sell more than available stock |
+| BR-002 | Cannot sell inactive products |
+| BR-003 | Confirmed sale deducts stock and creates movement record |
+| BR-004 | Confirmed purchase receipt increases stock and creates movement record |
+| BR-005 | Stock adjustments require a reason and manager approval |
+| BR-006 | All access enforced server-side via permission decorators |
+| BR-007 | Credit sales checked against customer credit limit |
+| BR-008 | All adjustments, returns, and cancellations are auditable |
+| BR-009 | Sales cannot be directly edited — use returns |
+| BR-010 | Full audit trail for all important actions |
+
+---
+
+## Default Roles & Permissions
+
+| Role | Access |
+|---|---|
+| Administrator | Full access |
+| Manager | All operations except user/role management |
+| Sales Officer | Customers, sales, payments, reports |
+| Store Officer | Products, inventory, purchases |
+| Accountant | Sales, payments, financial reports |
+
+---
+
+## Project Structure
+
+```
+ankole-beverages/
+├── run.py                   # Entry point
+├── requirements.txt
+├── .env.example
+├── app/
+│   ├── __init__.py          # App factory + seed data
+│   ├── config.py
+│   ├── extensions.py        # db, login_manager, csrf, migrate
+│   ├── models/models.py     # All SQLAlchemy models
+│   ├── auth/                # Login, logout, password change
+│   ├── dashboard/           # KPI dashboard
+│   ├── products/            # Products, categories, units
+│   ├── inventory/           # Stock management
+│   ├── purchases/           # Purchase orders
+│   ├── sales/               # Sales with POS form
+│   ├── customers/           # Customer management
+│   ├── suppliers/           # Supplier management
+│   ├── payments/            # Payment recording
+│   ├── reports/             # All reports + CSV export
+│   ├── admin/               # Users, roles, settings
+│   ├── utils/helpers.py     # Business rules & helpers
+│   ├── utils/decorators.py  # Permission decorators
+│   └── templates/           # Jinja2 templates (Bootstrap 5)
+```
+
+---
+
+## Security
+
+- Passwords hashed with Werkzeug PBKDF2
+- CSRF protection on all forms (Flask-WTF)
+- Session management via Flask-Login
+- Server-side role/permission checks on every route
+- SQL injection protection via SQLAlchemy ORM
+- XSS protection via Jinja2 auto-escaping
+- Audit log for all critical actions

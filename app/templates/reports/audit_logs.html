@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block page_title %}Audit Log{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <form method="GET" class="d-flex gap-2 align-items-center">
+    <label class="form-label mb-0 small">Show last</label>
+    <select name="limit" class="form-select form-select-sm" style="width:90px" onchange="this.form.submit()">
+      {% for n in [50, 100, 200, 500] %}<option value="{{ n }}" {% if limit == n %}selected{% endif %}>{{ n }}</option>{% endfor %}
+    </select>
+    <span class="text-muted small">entries</span>
+  </form>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>Date/Time</th><th>User</th><th>Action</th><th>Entity</th><th>Entity ID</th><th>IP</th><th>Details</th></tr></thead>
+      <tbody>
+      {% for log in logs %}
+      <tr>
+        <td class="text-muted small">{{ log.created_at | short_dt }}</td>
+        <td class="small fw-semibold">{{ log.user.username if log.user else 'System' }}</td>
+        <td><span class="badge bg-primary-subtle text-primary small">{{ log.action }}</span></td>
+        <td class="small text-muted">{{ log.entity_type }}</td>
+        <td class="small text-muted">{{ log.entity_id or '—' }}</td>
+        <td class="small text-muted">{{ log.ip_address or '—' }}</td>
+        <td class="small text-muted text-truncate" style="max-width:200px">{{ log.details or '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center py-4 text-muted">No audit logs</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

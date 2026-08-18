@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page_title %}{{ supplier.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><a href="{{ url_for('suppliers.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a><a href="{{ url_for('suppliers.edit_supplier', id=supplier.id) }}" class="btn btn-sm btn-outline-primary">Edit</a></div>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="form-card">
+      <h6 class="fw-semibold mb-3">Supplier Details</h6>
+      <div class="small text-muted">Number</div><div class="mb-2">{{ supplier.supplier_number }}</div>
+      <div class="small text-muted">Contact</div><div class="mb-2">{{ supplier.contact_person or '—' }}</div>
+      <div class="small text-muted">Phone</div><div class="mb-2">{{ supplier.telephone or '—' }}</div>
+      <div class="small text-muted">Email</div><div class="mb-2">{{ supplier.email or '—' }}</div>
+      <div class="small text-muted">Location</div><div class="mb-2">{{ supplier.location or '—' }}</div>
+      <div class="small text-muted">Payment Terms</div><div class="mb-2">{{ supplier.payment_terms or '—' }}</div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-cart-plus me-2"></i>Purchase History</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead><tr><th>PO #</th><th class="text-end">Total</th><th class="text-center">Status</th><th>Date</th></tr></thead>
+          <tbody>{% for p in purchases %}<tr><td><a href="{{ url_for('purchases.detail', id=p.id) }}" class="text-decoration-none">{{ p.purchase_number }}</a></td><td class="text-end">{{ p.total_amount | ugx }}</td><td class="text-center"><span class="badge badge-{{ p.status | lower }} rounded-pill">{{ p.status }}</span></td><td class="text-muted small">{{ p.created_at | short_date }}</td></tr>{% else %}<tr><td colspan="4" class="text-center py-3 text-muted">No purchases</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block page_title %}Customer Balances{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="GET" class="d-flex gap-3 align-items-center">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="overdue" value="1" {% if overdue_only %}checked{% endif %}>
+      <label class="form-check-label small">Overdue only</label>
+    </div>
+    <button class="btn btn-sm btn-primary">Filter</button>
+  </form>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Customer</th><th>Type</th><th class="text-end">Credit Limit</th><th class="text-end">Outstanding</th><th class="text-end">Overdue</th><th></th></tr></thead>
+      <tbody>
+      {% for row in rows %}
+      <tr>
+        <td class="fw-semibold">{{ row.customer.name }}</td>
+        <td class="small">{{ row.customer.customer_type }}</td>
+        <td class="text-end small">{{ row.customer.credit_limit | ugx }}</td>
+        <td class="text-end fw-semibold {% if row.customer.outstanding_balance > 0 %}text-danger{% endif %}">{{ row.customer.outstanding_balance | ugx }}</td>
+        <td class="text-end {% if row.overdue > 0 %}text-danger fw-bold{% endif %}">{{ row.overdue | ugx }}</td>
+        <td>
+          <a href="{{ url_for('customers.detail', id=row.customer.id) }}" class="btn btn-sm btn-outline-primary py-0">View</a>
+          <a href="{{ url_for('reports.customer_statement', id=row.customer.id) }}" class="btn btn-sm btn-outline-secondary py-0">Statement</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center py-4 text-muted">No outstanding balances</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

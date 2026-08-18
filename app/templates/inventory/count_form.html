@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block page_title %}New Stock Count{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h5 class="fw-semibold mb-2"><i class="bi bi-clipboard-check me-2 text-primary"></i>Physical Stock Count</h5>
+  <p class="text-muted small mb-4">Enter the physically counted quantity for each product. Leave blank to skip a product. Variances will be submitted for manager approval.</p>
+  <form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="table-responsive mb-4">
+      <table class="table table-sm table-hover">
+        <thead><tr><th>SKU</th><th>Product</th><th class="text-center">System Qty</th><th class="text-center">Counted Qty</th><th class="text-center">Variance</th><th>Reason (if variance)</th></tr></thead>
+        <tbody>
+        {% for p in products %}
+        <tr>
+          <td class="text-muted small">{{ p.sku }}</td>
+          <td class="fw-semibold small">{{ p.name }}</td>
+          <td class="text-center fw-bold">{{ p.current_stock }}</td>
+          <td class="text-center"><input type="number" name="counted_{{ p.id }}" class="form-control form-control-sm text-center" min="0" placeholder="—" style="width:90px;margin:auto" oninput="calcVar(this, {{ p.current_stock }}, 'var-{{ p.id }}')"></td>
+          <td class="text-center fw-bold" id="var-{{ p.id }}">—</td>
+          <td><input type="text" name="reason_{{ p.id }}" class="form-control form-control-sm" placeholder="Optional reason"></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary">Submit Stock Count</button>
+      <a href="{{ url_for('inventory.counts') }}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}<script>
+function calcVar(input, sysQty, varId) {
+  const counted = parseInt(input.value);
+  const varEl = document.getElementById(varId);
+  if (isNaN(counted)) { varEl.textContent = '—'; varEl.className = 'text-center fw-bold'; return; }
+  const diff = counted - sysQty;
+  varEl.textContent = (diff >= 0 ? '+' : '') + diff;
+  varEl.className = 'text-center fw-bold ' + (diff > 0 ? 'text-success' : diff < 0 ? 'text-danger' : 'text-muted');
+}
+</script>{% endblock %}

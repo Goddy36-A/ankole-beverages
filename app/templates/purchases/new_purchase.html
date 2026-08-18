@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block page_title %}New Purchase Order{% endblock %}
+{% block content %}
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="table-card mb-3">
+        <div class="table-card-header">
+          <i class="bi bi-cart3 me-2"></i>Purchase Items
+          <button type="button" class="btn btn-sm btn-outline-primary ms-auto" onclick="addLine()"><i class="bi bi-plus-lg me-1"></i>Add Item</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table mb-0" id="linesTable">
+            <thead><tr><th>Product</th><th style="width:15%">Qty</th><th style="width:20%">Unit Cost (UGX)</th><th style="width:20%">Line Total</th><th style="width:5%"></th></tr></thead>
+            <tbody id="lineBody">
+              <tr id="line-0">
+                <td><select name="product_id[]" class="form-select form-select-sm" onchange="fillCost(this,0)"><option value="">Select product…</option>{% for p in products %}<option value="{{ p.id }}" data-cost="{{ p.cost_price }}">{{ p.name }}</option>{% endfor %}</select></td>
+                <td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" oninput="calcLine(0)"></td>
+                <td><input type="number" name="unit_cost[]" class="form-control form-control-sm" min="0" value="0" oninput="calcLine(0)"></td>
+                <td><span id="lt-0" class="small fw-semibold">UGX 0</span></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger py-0" onclick="removeLine(0)"><i class="bi bi-x"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-3 border-top d-flex justify-content-end"><strong>Total: <span id="grandTotal">UGX 0</span></strong></div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-card">
+        <h6 class="fw-semibold mb-3">Order Details</h6>
+        <div class="mb-3"><label class="form-label">Supplier *</label>
+          <select name="supplier_id" class="form-select" required><option value="">Select…</option>{% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+        <div class="mb-3"><label class="form-label">Supplier Invoice #</label><input type="text" name="invoice_number" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="3"></textarea></div>
+        <button type="submit" class="btn btn-primary w-100">Create Purchase Order</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block extra_js %}<script>
+const costs = { {% for p in products %}{{ p.id }}: {{ p.cost_price }},{% endfor %} };
+let n=1, totals={0:0};
+function fillCost(sel,idx){const pid=parseInt(sel.value);if(pid&&costs[pid]){document.getElementById('line-'+idx).querySelectorAll('input')[1].value=costs[pid];}calcLine(idx);}
+function calcLine(idx){const row=document.getElementById('line-'+idx);if(!row)return;const inputs=row.querySelectorAll('input[type="number"]');const lt=(parseInt(inputs[0].value)||0)*(parseInt(inputs[1].value)||0);totals[idx]=lt;document.getElementById('lt-'+idx).textContent='UGX '+lt.toLocaleString();calcGrand();}
+function calcGrand(){const g=Object.values(totals).reduce((a,b)=>a+b,0);document.getElementById('grandTotal').textContent='UGX '+g.toLocaleString();}
+function addLine(){const idx=n++;totals[idx]=0;const tbody=document.getElementById('lineBody');const tr=document.createElement('tr');tr.id='line-'+idx;tr.innerHTML=`<td><select name="product_id[]" class="form-select form-select-sm" onchange="fillCost(this,${idx})"><option value="">Select product…</option>{% for p in products %}<option value="{{ p.id }}" data-cost="{{ p.cost_price }}">{{ p.name }}</option>{% endfor %}</select></td><td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" oninput="calcLine(${idx})"></td><td><input type="number" name="unit_cost[]" class="form-control form-control-sm" min="0" value="0" oninput="calcLine(${idx})"></td><td><span id="lt-${idx}" class="small fw-semibold">UGX 0</span></td><td><button type="button" class="btn btn-sm btn-outline-danger py-0" onclick="removeLine(${idx})"><i class="bi bi-x"></i></button></td>`;tbody.appendChild(tr);}
+function removeLine(idx){const row=document.getElementById('line-'+idx);if(row&&document.getElementById('lineBody').children.length>1){row.remove();delete totals[idx];calcGrand();}}
+</script>{% endblock %}

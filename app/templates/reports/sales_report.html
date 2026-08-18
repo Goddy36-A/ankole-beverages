@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block page_title %}Sales Report{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label small">From</label><input type="date" name="from" class="form-control form-control-sm" value="{{ from_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">To</label><input type="date" name="to" class="form-control form-control-sm" value="{{ to_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">Customer</label>
+      <select name="customer_id" class="form-select form-select-sm">
+        <option value="">All Customers</option>
+        {% for c in customers %}<option value="{{ c.id }}" {% if customer_id == c.id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button class="btn btn-sm btn-primary">Filter</button>
+      <a href="{{ url_for('reports.sales_report', **request.args, export='csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
+    </div>
+  </form>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Sales</div><div class="kpi-value">{{ sales | length }}</div></div></div>
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="font-size:16px">{{ total_revenue | ugx }}</div></div></div>
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Paid</div><div class="kpi-value" style="font-size:16px">{{ total_paid | ugx }}</div></div></div>
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Outstanding</div><div class="kpi-value text-danger" style="font-size:16px">{{ total_balance | ugx }}</div></div></div>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>Invoice</th><th>Customer</th><th>Type</th><th class="text-end">Subtotal</th><th class="text-end">Discount</th><th class="text-end">Total</th><th class="text-end">Paid</th><th class="text-end">Balance</th><th>Date</th></tr></thead>
+      <tbody>
+      {% for s in sales %}
+      <tr>
+        <td><a href="{{ url_for('sales.detail', id=s.id) }}" class="fw-semibold text-decoration-none">{{ s.invoice_number }}</a></td>
+        <td class="small">{{ s.customer.name }}</td>
+        <td><span class="badge badge-{{ s.sale_type | lower }} rounded-pill small">{{ s.sale_type }}</span></td>
+        <td class="text-end small">{{ s.subtotal | ugx }}</td>
+        <td class="text-end small text-danger">{% if s.discount %}-{{ s.discount | ugx }}{% else %}—{% endif %}</td>
+        <td class="text-end small fw-semibold">{{ s.total_amount | ugx }}</td>
+        <td class="text-end small text-success">{{ s.amount_paid | ugx }}</td>
+        <td class="text-end small {% if s.balance > 0 %}text-danger fw-semibold{% endif %}">{{ s.balance | ugx }}</td>
+        <td class="text-muted small">{{ s.created_at | short_date }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" class="text-center py-4 text-muted">No sales found for selected filters</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

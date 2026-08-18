@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block page_title %}Stock Movements{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <form class="d-flex gap-2" method="GET">
+    <select name="product_id" class="form-select form-select-sm" style="width:240px">
+      <option value="">All Products</option>
+      {% for p in products %}<option value="{{ p.id }}" {% if selected_product_id == p.id %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+    </select>
+    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-filter"></i> Filter</button>
+  </form>
+  <a href="{{ url_for('reports.movements_report') }}" class="btn btn-sm btn-outline-primary ms-auto">Full Report</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>Date</th><th>Product</th><th class="text-center">Type</th><th class="text-center">Qty</th><th>Reason</th><th>By</th></tr></thead>
+      <tbody>
+      {% for m in movements %}
+      <tr>
+        <td class="text-muted small">{{ m.created_at | short_dt }}</td>
+        <td class="fw-semibold small">{{ m.product.name }}</td>
+        <td class="text-center"><span class="badge {% if m.quantity > 0 %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} small">{{ m.movement_type }}</span></td>
+        <td class="text-center fw-bold {% if m.quantity > 0 %}text-success{% else %}text-danger{% endif %}">{{ '+' if m.quantity > 0 else '' }}{{ m.quantity }}</td>
+        <td class="text-muted small">{{ m.reason or '—' }}</td>
+        <td class="text-muted small">{{ m.performer.username }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center py-4 text-muted">No movements found</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

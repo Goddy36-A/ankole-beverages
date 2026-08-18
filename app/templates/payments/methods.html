@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block page_title %}Payment Methods{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('payments.new_method') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Method</a>
+</div>
+<div class="table-card">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Name</th><th>Description</th><th class="text-center">Status</th></tr></thead>
+    <tbody>{% for m in methods %}<tr><td class="fw-semibold">{{ m.name }}</td><td class="text-muted small">{{ m.description or '—' }}</td><td class="text-center">{% if m.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
+{% endblock %}

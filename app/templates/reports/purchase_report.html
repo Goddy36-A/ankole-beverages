@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block page_title %}Purchase Report{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label small">From</label><input type="date" name="from" class="form-control form-control-sm" value="{{ from_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">To</label><input type="date" name="to" class="form-control form-control-sm" value="{{ to_str }}"></div>
+    <div class="col-md-3"><label class="form-label small">Supplier</label>
+      <select name="supplier_id" class="form-select form-select-sm">
+        <option value="">All Suppliers</option>
+        {% for s in suppliers %}<option value="{{ s.id }}" {% if supplier_id == s.id %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button class="btn btn-sm btn-primary">Filter</button>
+      <a href="{{ url_for('reports.purchase_report', **request.args, export='csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
+    </div>
+  </form>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Total Orders</div><div class="kpi-value">{{ purchases | length }}</div></div></div>
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Total Purchase Value</div><div class="kpi-value" style="font-size:16px">{{ total | ugx }}</div></div></div>
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Received Orders</div><div class="kpi-value">{{ purchases | selectattr('status','eq','RECEIVED') | list | length }}</div></div></div>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead><tr><th>PO #</th><th>Supplier</th><th>Invoice #</th><th class="text-end">Total</th><th class="text-center">Status</th><th>Date</th></tr></thead>
+      <tbody>
+      {% for p in purchases %}
+      <tr>
+        <td><a href="{{ url_for('purchases.detail', id=p.id) }}" class="fw-semibold text-decoration-none">{{ p.purchase_number }}</a></td>
+        <td class="small">{{ p.supplier.name }}</td>
+        <td class="text-muted small">{{ p.invoice_number or '—' }}</td>
+        <td class="text-end fw-semibold">{{ p.total_amount | ugx }}</td>
+        <td class="text-center"><span class="badge badge-{{ p.status | lower }} rounded-pill small">{{ p.status }}</span></td>
+        <td class="text-muted small">{{ p.created_at | short_date }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center py-4 text-muted">No purchases found</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

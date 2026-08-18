@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block page_title %}Stock Counts{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('inventory.new_count') }}" class="btn btn-sm btn-primary"><i class="bi bi-clipboard-check me-1"></i>New Stock Count</a>
+</div>
+<div class="table-card">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Count #</th><th class="text-center">Status</th><th>Counted By</th><th>Approved By</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+    {% for c in counts %}
+    <tr>
+      <td class="fw-semibold">{{ c.count_number }}</td>
+      <td class="text-center"><span class="badge badge-{{ c.status | lower }} rounded-pill">{{ c.status }}</span></td>
+      <td class="small">{{ c.counter.username }}</td>
+      <td class="small text-muted">{{ c.approver.username if c.approver else '—' }}</td>
+      <td class="small text-muted">{{ c.created_at | short_date }}</td>
+      <td>
+        {% if c.status == 'OPEN' and current_user.has_permission('inventory.adjust.approve') %}
+        <form method="POST" action="{{ url_for('inventory.approve_count', id=c.id) }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-success py-0" onclick="return confirm('Approve and apply this stock count? Stock levels will be updated.')">Approve & Apply</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="text-center py-4 text-muted">No stock counts yet</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

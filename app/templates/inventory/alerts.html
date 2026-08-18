@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block page_title %}Stock Alerts{% endblock %}
+{% block content %}
+<div class="row g-4">
+  {% if out_of_stock %}
+  <div class="col-12">
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-exclamation-octagon-fill text-danger me-2"></i>Out of Stock ({{ out_of_stock | length }})</div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th class="text-center">Reorder Level</th></tr></thead>
+          <tbody>{% for p in out_of_stock %}<tr><td class="text-muted small">{{ p.sku }}</td><td class="fw-semibold text-danger">{{ p.name }}</td><td class="small">{{ p.category.name }}</td><td class="text-center">{{ p.reorder_level }}</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if low_stock %}
+  <div class="col-12">
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Low Stock ({{ low_stock | length }})</div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>SKU</th><th>Product</th><th class="text-center">Current Stock</th><th class="text-center">Reorder Level</th></tr></thead>
+          <tbody>{% for p in low_stock %}<tr><td class="text-muted small">{{ p.sku }}</td><td class="fw-semibold">{{ p.name }}</td><td class="text-center fw-bold text-warning">{{ p.current_stock }}</td><td class="text-center">{{ p.reorder_level }}</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if not low_stock and not out_of_stock %}
+  <div class="col-12"><div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>No stock alerts at this time. All products are at healthy stock levels.</div></div>
+  {% endif %}
+</div>
+{% endblock %}

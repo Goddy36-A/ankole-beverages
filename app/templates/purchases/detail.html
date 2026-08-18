@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block page_title %}PO: {{ purchase.purchase_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <a href="{{ url_for('purchases.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+  <div class="d-flex gap-2">
+    {% if purchase.status == "DRAFT" %}
+    <form method="POST" action="{{ url_for('purchases.receive', id=purchase.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-sm btn-success" onclick="return confirm('Confirm receipt? This will increase stock levels.')">Confirm Receipt</button>
+    </form>
+    {% elif purchase.status == "RECEIVED" %}
+    <a href="{{ url_for('purchases.create_return', id=purchase.id) }}" class="btn btn-sm btn-outline-warning">Process Return</a>
+    {% endif %}
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="table-card">
+      <div class="table-card-header">
+        <i class="bi bi-cart-plus me-2"></i>{{ purchase.purchase_number }}
+        <span class="badge badge-{{ purchase.status | lower }} ms-2 rounded-pill">{{ purchase.status }}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Product</th><th class="text-center">Qty</th><th class="text-end">Unit Cost</th><th class="text-end">Line Total</th></tr></thead>
+          <tbody>
+          {% for i in items %}
+          <tr>
+            <td>{{ i.product.name }} <span class="text-muted small">{{ i.product.sku }}</span></td>
+            <td class="text-center">{{ i.quantity }}</td>
+            <td class="text-end">{{ i.unit_cost | ugx }}</td>
+            <td class="text-end fw-semibold">{{ i.line_total | ugx }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+          <tfoot><tr class="table-primary"><td colspan="3" class="text-end fw-bold">Total</td><td class="text-end fw-bold">{{ purchase.total_amount | ugx }}</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-card">
+      <h6 class="fw-semibold mb-3">PO Info</h6>
+      <div class="small text-muted">Supplier</div><div class="mb-2 fw-semibold">{{ purchase.supplier.name }}</div>
+      <div class="small text-muted">Invoice #</div><div class="mb-2">{{ purchase.invoice_number or '—' }}</div>
+      <div class="small text-muted">Created</div><div class="mb-2">{{ purchase.created_at | short_dt }}</div>
+      {% if purchase.received_at %}<div class="small text-muted">Received</div><div class="mb-2">{{ purchase.received_at | short_dt }}</div>{% endif %}
+      {% if purchase.notes %}<div class="small text-muted">Notes</div><div class="small">{{ purchase.notes }}</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

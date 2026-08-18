@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block page_title %}User Management{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.roles') }}" class="btn btn-sm btn-outline-secondary">Roles &amp; Permissions</a>
+    <a href="{{ url_for('admin.settings') }}" class="btn btn-sm btn-outline-secondary">System Settings</a>
+  </div>
+  <a href="{{ url_for('admin.new_user') }}" class="btn btn-sm btn-primary"><i class="bi bi-person-plus me-1"></i>New User</a>
+</div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Last Sign In</th><th class="text-center">Status</th><th></th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td class="fw-semibold">{{ u.username }}{% if u.id == current_user.id %} <span class="badge bg-primary-subtle text-primary small">You</span>{% endif %}</td>
+        <td>{{ u.name or '—' }}</td>
+        <td class="small text-muted">{{ u.email or '—' }}</td>
+        <td>
+          {% set ur = u.user_roles.first() %}
+          {% if ur %}<span class="badge bg-info-subtle text-info">{{ ur.role.name }}</span>{% else %}<span class="text-muted small">No role</span>{% endif %}
+        </td>
+        <td class="small text-muted">{{ u.last_signed_in | short_date }}</td>
+        <td class="text-center">
+          {% if u.is_active %}<span class="badge bg-success-subtle text-success">Active</span>
+          {% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.edit_user', id=u.id) }}" class="btn btn-sm btn-outline-primary py-0 me-1">Edit</a>
+          {% if u.id != current_user.id %}
+          <form method="POST" action="{{ url_for('admin.toggle_user', id=u.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm py-0 {% if u.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                    onclick="return confirm('{% if u.is_active %}Deactivate{% else %}Activate{% endif %} {{ u.username }}?')">
+              {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center py-4 text-muted">No users found</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
