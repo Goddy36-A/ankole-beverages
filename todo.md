@@ -88,3 +88,7 @@
 - [x] Add visible customer activation/deactivation and general profile editing controls.
 - [x] Expose purchase and management report views with filter controls in the UI.
 - [x] Save and verify the final checkpoint after these final controls are complete.
+
+## GitHub export
+
+- [ ] Create the private GitHub repository `ankole-beverages` under the authenticated account and push the current project.
