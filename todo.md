@@ -91,4 +91,4 @@
 
 ## GitHub export
 
-- [ ] Create the private GitHub repository `ankole-beverages` under the authenticated account and push the current project.
+- [x] Create the private GitHub repository `ankole-beverages` under the authenticated account and push the current project.
