@@ -11,14 +11,14 @@
     </div>
     <div class="col-md-3 d-flex gap-2">
       <button class="btn btn-sm btn-primary">Filter</button>
-      <a href="{{ url_for('reports.inventory_report', **request.args, export='csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
+      <a href="{{ csv_url }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
     </div>
   </form>
 </div>
 <div class="row g-3 mb-3">
   <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Products Shown</div><div class="kpi-value">{{ products | length }}</div></div></div>
   <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Total Stock Value</div><div class="kpi-value" style="font-size:16px">{{ total_value | ugx }}</div></div></div>
-  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Low/Out of Stock</div><div class="kpi-value text-warning">{{ products | selectattr('is_low_stock') | list | length }}</div></div></div>
+  <div class="col-md-4"><div class="kpi-card"><div class="kpi-label">Low/Out of Stock</div><div class="kpi-value text-warning">{{ low_count }}</div></div></div>
 </div>
 <div class="table-card">
   <div class="table-responsive">

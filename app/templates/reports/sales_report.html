@@ -13,7 +13,7 @@
     </div>
     <div class="col-md-3 d-flex gap-2">
       <button class="btn btn-sm btn-primary">Filter</button>
-      <a href="{{ url_for('reports.sales_report', **request.args, export='csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
+      <a href="{{ csv_url }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i>CSV</a>
     </div>
   </form>
 </div>

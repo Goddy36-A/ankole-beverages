@@ -13,8 +13,8 @@
   </form>
 </div>
 <div class="row g-3 mb-3">
-  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Invoiced</div><div class="kpi-value" style="font-size:15px">{{ sales | sum(attribute='total_amount') | ugx }}</div></div></div>
-  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Paid</div><div class="kpi-value text-success" style="font-size:15px">{{ payments | sum(attribute='amount') | ugx }}</div></div></div>
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Invoiced</div><div class="kpi-value" style="font-size:15px">{{ total_invoiced | ugx }}</div></div></div>
+  <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Total Paid</div><div class="kpi-value text-success" style="font-size:15px">{{ total_paid_amt | ugx }}</div></div></div>
   <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Outstanding</div><div class="kpi-value text-danger" style="font-size:15px">{{ customer.outstanding_balance | ugx }}</div></div></div>
   <div class="col-md-3"><div class="kpi-card"><div class="kpi-label">Credit Limit</div><div class="kpi-value" style="font-size:15px">{{ customer.credit_limit | ugx }}</div></div></div>
 </div>
