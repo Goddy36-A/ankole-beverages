@@ -28,7 +28,9 @@ def detail(id):
     items = (SaleItem.query.filter_by(sale_id=id)
              .join(Product, Product.id == SaleItem.product_id).all())
     payments = Payment.query.filter_by(sale_id=id).all()
-    return render_template('sales/detail.html', sale=sale, items=items, payments=payments)
+    return render_template('sales/detail.html',
+        sale=sale, items=items, payments=payments,
+        now=datetime.utcnow())
 
 
 @sales_bp.route('/new', methods=['GET', 'POST'])
