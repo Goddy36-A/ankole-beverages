@@ -210,3 +210,9 @@ def _seed_defaults():
         db.session.add(SystemSetting(setting_key='currency', setting_value='UGX', description='Default currency'))
 
     db.session.commit()
+
+
+# ── Module-level Flask instance ───────────────────────────────────────────────
+# Render auto-detects "gunicorn app:app" and ignores Procfile/render.yaml.
+# Exposing `app` here makes that command work without any dashboard changes.
+app = create_app()
