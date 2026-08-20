@@ -1,16 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('sales.index') }}">Sales</a></li><li class="breadcrumb-item active">{{ sale.invoice_number }}</li>{% endblock %}
+
 {% block page_title %}Sale {{ sale.invoice_number }}{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between mb-3 align-items-center">
-  <a href="{{ url_for('sales.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
-  <div class="d-flex gap-2">
-    {% if sale.balance > 0 %}
-    <a href="{{ url_for('payments.record_payment', sale_id=sale.id) }}" class="btn btn-sm btn-success">Record Payment</a>
-    {% endif %}
-    {% if sale.status == "COMPLETED" %}
-    <a href="{{ url_for('sales.create_return', id=sale.id) }}" class="btn btn-sm btn-outline-warning">Process Return</a>
-    {% endif %}
-  </div>
 </div>
 <div class="row g-3">
   <div class="col-md-8">

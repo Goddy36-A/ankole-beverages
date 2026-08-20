@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('purchases.index') }}">Purchases</a></li><li class="breadcrumb-item active">New Purchase Order</li>{% endblock %}
+
 {% block page_title %}New Purchase Order{% endblock %}
 {% block content %}
 <form method="POST">

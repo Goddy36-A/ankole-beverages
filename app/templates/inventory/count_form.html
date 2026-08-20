@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('inventory.index') }}">Inventory</a></li><li class="breadcrumb-item"><a href="{{ url_for('inventory.counts') }}">Stock Counts</a></li><li class="breadcrumb-item active">New Count</li>{% endblock %}
+
 {% block page_title %}New Stock Count{% endblock %}
 {% block content %}
 <div class="form-card">

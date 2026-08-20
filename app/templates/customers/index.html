@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item active">Customers</li>{% endblock %}
+
+{% block page_actions %}<a href="{{ url_for('customers.new_customer') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Customer</a>{% endblock %}
+
 {% block page_title %}Customers{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between mb-3">

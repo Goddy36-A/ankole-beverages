@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('inventory.index') }}">Inventory</a></li><li class="breadcrumb-item active">Stock Alerts</li>{% endblock %}
+
+{% block page_actions %}<a href="{{ url_for('inventory.record_loss') }}" class="btn btn-sm btn-outline-danger">Record Loss</a>{% endblock %}
+
 {% block page_title %}Stock Alerts{% endblock %}
 {% block content %}
 <div class="row g-4">

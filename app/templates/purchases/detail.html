@@ -1,18 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('purchases.index') }}">Purchases</a></li><li class="breadcrumb-item active">{{ purchase.purchase_number }}</li>{% endblock %}
+
 {% block page_title %}PO: {{ purchase.purchase_number }}{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between mb-3 align-items-center">
-  <a href="{{ url_for('purchases.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
-  <div class="d-flex gap-2">
-    {% if purchase.status == "DRAFT" %}
-    <form method="POST" action="{{ url_for('purchases.receive', id=purchase.id) }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="btn btn-sm btn-success" onclick="return confirm('Confirm receipt? This will increase stock levels.')">Confirm Receipt</button>
-    </form>
-    {% elif purchase.status == "RECEIVED" %}
-    <a href="{{ url_for('purchases.create_return', id=purchase.id) }}" class="btn btn-sm btn-outline-warning">Process Return</a>
-    {% endif %}
-  </div>
 </div>
 <div class="row g-3">
   <div class="col-md-8">

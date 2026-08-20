@@ -1,21 +1,11 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item active">Products</li>{% endblock %}
+
+{% block page_actions %}<a href="{{ url_for('products.categories') }}" class="btn btn-sm btn-outline-secondary">Categories</a><a href="{{ url_for('products.units') }}" class="btn btn-sm btn-outline-secondary ms-1">Units</a><a href="{{ url_for('products.new_product') }}" class="btn btn-sm btn-primary ms-1"><i class="bi bi-plus-lg me-1"></i>New Product</a>{% endblock %}
+
 {% block page_title %}Products{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-  <form class="d-flex gap-2" method="GET">
-    <input class="form-control form-control-sm" name="q" value="{{ search }}" placeholder="Search name or SKU…" style="width:220px">
-    <select name="active" class="form-select form-select-sm" style="width:130px">
-      <option value="">All Products</option>
-      <option value="1" {% if active_only %}selected{% endif %}>Active only</option>
-    </select>
-    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
-  </form>
-  <div class="d-flex gap-2">
-    <a href="{{ url_for('products.categories') }}" class="btn btn-sm btn-outline-secondary">Categories</a>
-    <a href="{{ url_for('products.units') }}" class="btn btn-sm btn-outline-secondary">Units</a>
-    <a href="{{ url_for('products.new_product') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Product</a>
-  </div>
-</div>
 <div class="table-card">
   <div class="table-responsive">
     <table class="table table-hover mb-0">

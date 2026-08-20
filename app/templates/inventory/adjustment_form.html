@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('inventory.index') }}">Inventory</a></li><li class="breadcrumb-item"><a href="{{ url_for('inventory.adjustments') }}">Adjustments</a></li><li class="breadcrumb-item active">Request</li>{% endblock %}
+
 {% block page_title %}Request Stock Adjustment{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-md-5">

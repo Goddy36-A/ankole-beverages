@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('customers.index') }}">Customers</a></li><li class="breadcrumb-item active">{% if customer %}Edit{% else %}New Customer{% endif %}</li>{% endblock %}
+
 {% block page_title %}{% if customer %}Edit Customer{% else %}New Customer{% endif %}{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-md-6">

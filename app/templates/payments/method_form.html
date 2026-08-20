@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('payments.methods') }}">Payment Methods</a></li><li class="breadcrumb-item active">New Method</li>{% endblock %}
+
 {% block page_title %}New Payment Method{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-md-4">

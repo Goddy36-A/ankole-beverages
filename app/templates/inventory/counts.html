@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('inventory.index') }}">Inventory</a></li><li class="breadcrumb-item active">Stock Counts</li>{% endblock %}
+
+{% block page_actions %}<a href="{{ url_for('inventory.new_count') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Count</a>{% endblock %}
+
 {% block page_title %}Stock Counts{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-end mb-3">

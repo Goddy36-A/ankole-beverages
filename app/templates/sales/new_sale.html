@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('sales.index') }}">Sales</a></li><li class="breadcrumb-item active">New Sale</li>{% endblock %}
+
 {% block page_title %}New Sale{% endblock %}
 {% block extra_css %}
 <style>

@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Users &amp; Roles</a></li><li class="breadcrumb-item active">Roles</li>{% endblock %}
+
+{% block page_actions %}<a href="{{ url_for('admin.new_role') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Role</a>{% endblock %}
+
 {% block page_title %}Roles & Permissions{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between mb-3">

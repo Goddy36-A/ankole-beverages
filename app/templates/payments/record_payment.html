@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('sales.index') }}">Sales</a></li><li class="breadcrumb-item"><a href="{{ url_for('sales.detail', id=sale.id) }}">{{ sale.invoice_number }}</a></li><li class="breadcrumb-item active">Record Payment</li>{% endblock %}
+
 {% block page_title %}Record Payment{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-md-5">

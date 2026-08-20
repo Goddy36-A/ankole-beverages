@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('purchases.index') }}">Purchases</a></li><li class="breadcrumb-item"><a href="{{ url_for('purchases.detail', id=purchase.id) }}">{{ purchase.purchase_number }}</a></li><li class="breadcrumb-item active">Return</li>{% endblock %}
+
 {% block page_title %}Purchase Return — {{ purchase.purchase_number }}{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-lg-7">

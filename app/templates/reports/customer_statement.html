@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('reports.index') }}">Reports</a></li><li class="breadcrumb-item"><a href="{{ url_for('customers.index') }}">Customers</a></li><li class="breadcrumb-item active">{{ customer.name }}</li>{% endblock %}
+
 {% block page_title %}Statement — {{ customer.name }}{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between mb-3 align-items-start flex-wrap gap-2">

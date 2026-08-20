@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Users &amp; Roles</a></li><li class="breadcrumb-item"><a href="{{ url_for('admin.roles') }}">Roles</a></li><li class="breadcrumb-item active">{% if role %}Edit{% else %}New{% endif %}</li>{% endblock %}
+
 {% block page_title %}{% if role %}Edit Role{% else %}New Role{% endif %}{% endblock %}
 {% block content %}
 <div class="row justify-content-center"><div class="col-lg-7">
