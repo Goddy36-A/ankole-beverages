@@ -85,6 +85,50 @@ def create_app(config_class=None):
     with app.app_context():
         db.create_all()
         _seed_defaults()
+    # ── Manual download route (public — no login required) ────────────────────
+    import os as _os
+    from flask import send_from_directory as _sfd, request as _req
+
+    @app.route('/manual')
+    def download_manual():
+        _static = _os.path.join(app.root_path, 'static')
+        _fname  = 'BISMS_User_Manual_v1.pdf'
+        if _req.args.get('dl') == '1':
+            return _sfd(_static, _fname, as_attachment=True, download_name=_fname)
+        _page = """<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BISMS User Manual</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<style>body{background:#f1f5f9;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.card{border-radius:16px;border:none;box-shadow:0 4px 24px rgba(0,0,0,.10);max-width:460px;width:100%}
+.top{background:#025E36;border-radius:16px 16px 0 0;padding:28px 24px}</style>
+</head><body>
+<div class="card">
+  <div class="top text-center">
+    <i class="bi bi-book" style="font-size:42px;color:#F5D674"></i>
+    <h4 class="fw-bold text-white mt-2 mb-1">BISMS User Manual</h4>
+    <div class="text-white opacity-75 small">Ankole Soft Drinks Ltd &middot; Buhweju District</div>
+  </div>
+  <div class="card-body p-4 text-center">
+    <span class="badge rounded-pill" style="background:#B8960C;color:#fff">Version 1.0 &mdash; August 2026</span>
+    <p class="mt-3 text-secondary small">30 pages &middot; 16 sections &middot; PDF</p>
+    <a href="/manual?dl=1" class="btn btn-success btn-lg w-100 fw-semibold mb-2">
+      <i class="bi bi-download me-2"></i>Download PDF
+    </a>
+    <a href="/static/BISMS_User_Manual_v1.pdf" target="_blank" class="btn btn-outline-secondary w-100">
+      <i class="bi bi-eye me-2"></i>View in Browser
+    </a>
+    <hr class="my-3">
+    <div class="text-muted" style="font-size:11px">
+      Developed by Metropolitan International University<br>
+      &copy; 2026 Ankole Soft Drinks Ltd
+    </div>
+  </div>
+</div></body></html>"""
+        from flask import make_response
+        return make_response(_page, 200)
 
     return app
 
