@@ -1,3 +1,4 @@
+from app.utils.pagination import paginate
 import json
 from datetime import datetime, timedelta
 from flask import render_template, redirect, url_for, flash, request, jsonify, abort
@@ -16,8 +17,9 @@ from app.utils.decorators import permission_required
 @login_required
 @permission_required('sales.view')
 def index():
-    sales = Sale.query.order_by(Sale.created_at.desc()).limit(200).all()
-    return render_template('sales/index.html', sales=sales)
+    q = Sale.query.order_by(Sale.created_at.desc())
+    pg, sales = paginate(q, per_page=30)
+    return render_template('sales/index.html', sales=sales, pg=pg)
 
 
 @sales_bp.route('/<int:id>')
@@ -289,3 +291,19 @@ def api_product(id):
         'current_stock': p.current_stock,
         'is_active': p.is_active,
     })
+
+
+@sales_bp.route('/<int:id>/print')
+@login_required
+@permission_required('sales.view')
+def print_invoice(id):
+    sale = Sale.query.get_or_404(id)
+    items = SaleItem.query.filter_by(sale_id=id).all()
+    payments = Payment.query.filter_by(sale_id=id).all()
+    from app.models.models import SystemSetting
+    company = SystemSetting.query.filter_by(setting_key='company_name').first()
+    company_name = company.setting_value if company else 'Ankole Soft Drinks Ltd'
+    return render_template('sales/print_invoice.html',
+        sale=sale, items=items, payments=payments,
+        company_name=company_name,
+        now=datetime.utcnow())

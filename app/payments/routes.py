@@ -1,3 +1,4 @@
+from app.utils.pagination import paginate
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.payments import payments_bp
@@ -11,8 +12,9 @@ from app.utils.decorators import permission_required
 @login_required
 @permission_required('payments.manage')
 def index():
-    payments = Payment.query.order_by(Payment.created_at.desc()).limit(200).all()
-    return render_template('payments/index.html', payments=payments)
+    q = Payment.query.order_by(Payment.created_at.desc())
+    pg, payments = paginate(q, per_page=30)
+    return render_template('payments/index.html', payments=payments, pg=pg)
 
 
 @payments_bp.route('/record/<int:sale_id>', methods=['GET', 'POST'])

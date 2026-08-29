@@ -1,3 +1,4 @@
+from app.utils.pagination import paginate
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.purchases import purchases_bp
@@ -11,8 +12,9 @@ from app.utils.decorators import permission_required
 @login_required
 @permission_required('purchases.view')
 def index():
-    purchases = Purchase.query.order_by(Purchase.created_at.desc()).limit(200).all()
-    return render_template('purchases/index.html', purchases=purchases)
+    q = Purchase.query.order_by(Purchase.created_at.desc())
+    pg, purchases = paginate(q, per_page=30)
+    return render_template('purchases/index.html', purchases=purchases, pg=pg)
 
 
 @purchases_bp.route('/<int:id>')

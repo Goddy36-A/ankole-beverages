@@ -1,3 +1,4 @@
+from app.utils.pagination import paginate
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.suppliers import suppliers_bp
@@ -18,8 +19,8 @@ def index():
             Supplier.name.ilike(f'%{search}%'),
             Supplier.supplier_number.ilike(f'%{search}%'),
         ))
-    suppliers = q.order_by(Supplier.name).all()
-    return render_template('suppliers/index.html', suppliers=suppliers, search=search)
+    pg, suppliers = paginate(q.order_by(Supplier.name), per_page=30)
+    return render_template('suppliers/index.html', suppliers=suppliers, search=search, pg=pg)
 
 
 @suppliers_bp.route('/new', methods=['GET', 'POST'])

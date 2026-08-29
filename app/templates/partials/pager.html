@@ -1,0 +1,39 @@
+{% macro pager(pg, endpoint, q='', product_id='', customer_id='', supplier_id='', low_only='', type='', from='', to='') %}
+{% if pg and pg.total_pages > 1 %}
+{% set base = {'q': q, 'product_id': product_id, 'customer_id': customer_id,
+               'supplier_id': supplier_id, 'low_only': low_only,
+               'type': type, 'from': from, 'to': to} %}
+<div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+  <div class="text-muted small">
+    Showing {{ ((pg.page - 1) * pg.per_page + 1) }}–{{ [pg.page * pg.per_page, pg.total] | min }}
+    of <strong>{{ pg.total }}</strong> records
+  </div>
+  <nav aria-label="Pagination">
+    <ul class="pagination pagination-sm mb-0">
+
+      <li class="page-item {% if not pg.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for(endpoint, page=pg.prev_num,
+            q=q, product_id=product_id, low_only=low_only) }}">‹ Prev</a>
+      </li>
+
+      {% for p in pg.pages %}
+        {% if p is none %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% else %}
+          <li class="page-item {% if p == pg.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=p,
+                q=q, product_id=product_id, low_only=low_only) }}">{{ p }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      <li class="page-item {% if not pg.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for(endpoint, page=pg.next_num,
+            q=q, product_id=product_id, low_only=low_only) }}">Next ›</a>
+      </li>
+
+    </ul>
+  </nav>
+</div>
+{% endif %}
+{% endmacro %}

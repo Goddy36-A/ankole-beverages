@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'partials/pager.html' import pager %}
 
 {% block breadcrumb %}<li class="breadcrumb-item active">Payments</li>{% endblock %}
 
@@ -11,5 +12,8 @@
       <tbody>{% for p in payments %}<tr><td class="fw-semibold">{{ p.receipt_number }}</td><td>{{ p.customer.name }}</td><td>{{ p.payment_method.name }}</td><td class="text-end text-success fw-semibold">{{ p.amount | ugx }}</td><td class="text-muted small">{{ p.reference_number or '—' }}</td><td class="text-muted small">{{ p.created_at | short_date }}</td><td class="text-muted small">{{ p.receiver.username }}</td></tr>{% else %}<tr><td colspan="7" class="text-center py-4 text-muted">No payments recorded</td></tr>{% endfor %}</tbody>
     </table>
   </div>
+{% if pg %}
+  {{ pager(pg, 'payments.index') }}
+{% endif %}
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'partials/pager.html' import pager %}
 
 {% block breadcrumb %}<li class="breadcrumb-item active">Suppliers</li>{% endblock %}
 
@@ -17,5 +18,8 @@
       <tbody>{% for s in suppliers %}<tr><td class="text-muted small">{{ s.supplier_number }}</td><td class="fw-semibold"><a href="{{ url_for('suppliers.detail', id=s.id) }}" class="text-decoration-none">{{ s.name }}</a></td><td class="small">{{ s.contact_person or '—' }}</td><td class="small">{{ s.telephone or '—' }}</td><td class="small">{{ s.location or '—' }}</td><td class="text-center">{% if s.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</td><td><a href="{{ url_for('suppliers.edit_supplier', id=s.id) }}" class="btn btn-sm btn-outline-primary py-0">Edit</a></td></tr>{% else %}<tr><td colspan="7" class="text-center py-4 text-muted">No suppliers</td></tr>{% endfor %}</tbody>
     </table>
   </div>
+{% if pg %}
+  {{ pager(pg, 'suppliers.index', q=search) }}
+{% endif %}
 </div>
 {% endblock %}

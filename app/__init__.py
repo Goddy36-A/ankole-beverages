@@ -4,6 +4,23 @@ from app.config import config as config_map
 from app.extensions import db, login_manager, migrate, csrf
 
 
+
+def _register_context_processors(app):
+    """Inject global template variables available on every page."""
+    from app.models.models import Product
+
+    @app.context_processor
+    def global_vars():
+        try:
+            low_stock_count = Product.query.filter(
+                Product.current_stock <= Product.reorder_level,
+                Product.is_active == True,
+            ).count()
+        except Exception:
+            low_stock_count = 0
+        return dict(low_stock_count=low_stock_count)
+
+
 def create_app(config_class=None):
     if config_class is None:
         env = os.environ.get('FLASK_ENV', 'development')
@@ -68,6 +85,8 @@ def create_app(config_class=None):
             return '—'
         return value.strftime('%d %b %Y')
 
+
+
     # ── Error handlers ────────────────────────────────────────────────────────
     @app.errorhandler(403)
     def forbidden(e):
@@ -130,6 +149,7 @@ def create_app(config_class=None):
         from flask import make_response
         return make_response(_page, 200)
 
+    _register_context_processors(app)
     return app
 
 
@@ -260,3 +280,4 @@ def _seed_defaults():
 # Render auto-detects "gunicorn app:app" and ignores Procfile/render.yaml.
 # Exposing `app` here makes that command work without any dashboard changes.
 app = create_app()
+

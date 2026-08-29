@@ -1,3 +1,4 @@
+from app.utils.pagination import paginate
 from datetime import datetime, timedelta
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
@@ -24,10 +25,11 @@ def movements():
     q = StockMovement.query
     if product_id:
         q = q.filter_by(product_id=product_id)
-    movements = q.order_by(StockMovement.created_at.desc()).limit(300).all()
+    pg, movements = paginate(q.order_by(StockMovement.created_at.desc()), per_page=40)
     products = Product.query.order_by(Product.name).all()
     return render_template('inventory/movements.html',
-        movements=movements, products=products, selected_product_id=product_id)
+        movements=movements, products=products,
+        selected_product_id=product_id, pg=pg)
 
 
 @inventory_bp.route('/adjustments')

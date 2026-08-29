@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('sales.index') }}">Sales</a></li><li class="breadcrumb-item active">{{ sale.invoice_number }}</li>{% endblock %}
+{% block page_actions %}<a href="{{ url_for('sales.print_invoice', id=sale.id) }}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print Invoice</a>{% endblock %}
 
 {% block page_title %}Sale {{ sale.invoice_number }}{% endblock %}
 {% block content %}

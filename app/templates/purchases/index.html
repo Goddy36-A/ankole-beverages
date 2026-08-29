@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'partials/pager.html' import pager %}
 
 {% block breadcrumb %}<li class="breadcrumb-item active">Purchases</li>{% endblock %}
 
@@ -30,5 +31,8 @@
       </tbody>
     </table>
   </div>
+{% if pg %}
+  {{ pager(pg, 'purchases.index') }}
+{% endif %}
 </div>
 {% endblock %}

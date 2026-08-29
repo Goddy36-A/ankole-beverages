@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice {{ sale.invoice_number }}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1e293b; background: #fff; }
+
+    .page { max-width: 720px; margin: 0 auto; padding: 32px; }
+
+    /* Header */
+    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+    .company-name { font-size: 22px; font-weight: 700; color: #025E36; }
+    .company-sub { font-size: 11px; color: #64748b; margin-top: 3px; }
+    .inv-badge { text-align: right; }
+    .inv-badge .inv-label { font-size: 26px; font-weight: 800; color: #025E36; letter-spacing: 1px; }
+    .inv-badge .inv-number { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+    hr.thick { border: none; border-top: 2.5px solid #025E36; margin: 0 0 20px; }
+    hr.thin  { border: none; border-top: 1px solid #e2e8f0; margin: 16px 0; }
+
+    /* Meta grid */
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .meta-box { }
+    .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; margin-bottom: 4px; }
+    .meta-value { font-size: 13px; color: #1e293b; font-weight: 600; }
+    .meta-sub   { font-size: 11.5px; color: #64748b; }
+
+    /* Status badge */
+    .status { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+    .status-completed { background: #dcfce7; color: #166534; }
+    .status-credit    { background: #ede9fe; color: #5b21b6; }
+    .status-cash      { background: #d1fae5; color: #065f46; }
+
+    /* Items table */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    thead th { background: #025E36; color: #fff; padding: 9px 10px; font-size: 11px;
+               font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+    thead th:not(:first-child) { text-align: right; }
+    tbody td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; }
+    tbody td:not(:first-child) { text-align: right; }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
+
+    /* Totals */
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .totals-box { width: 280px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 5px 0;
+                  font-size: 12.5px; border-bottom: 1px solid #f1f5f9; }
+    .totals-row.grand { border-top: 2px solid #025E36; border-bottom: none;
+                        font-weight: 700; font-size: 14px; color: #025E36; padding-top: 8px; margin-top: 4px; }
+    .totals-row.balance { color: #dc2626; font-weight: 700; }
+
+    /* Payments */
+    .payments-section { margin-bottom: 24px; }
+    .payments-section h4 { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                           letter-spacing: .5px; color: #94a3b8; margin-bottom: 8px; }
+    .pmt-row { display: flex; justify-content: space-between; font-size: 12px;
+               padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+
+    /* Footer */
+    .inv-footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0;
+                  display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; }
+
+    /* Thank you box */
+    .thankyou { background: #e8f4ee; border-left: 4px solid #025E36;
+                padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #025E36; }
+
+    /* Print button — hidden in print */
+    .print-bar { text-align: center; margin: 24px 0 0; }
+    .print-btn { background: #025E36; color: #fff; border: none; padding: 10px 28px;
+                 border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; }
+    .back-btn  { background: #f1f5f9; color: #1e293b; border: none; padding: 10px 20px;
+                 border-radius: 6px; font-size: 13px; cursor: pointer; margin-right: 8px; }
+
+    @media print {
+      .print-bar { display: none !important; }
+      body { padding: 0; }
+      .page { padding: 16px; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="inv-header">
+    <div>
+      <div class="company-name">{{ company_name }}</div>
+      <div class="company-sub">Buhweju District, Uganda</div>
+    </div>
+    <div class="inv-badge">
+      <div class="inv-label">INVOICE</div>
+      <div class="inv-number">{{ sale.invoice_number }}</div>
+      <div style="margin-top:6px">
+        <span class="status status-{{ sale.status | lower }}">{{ sale.status }}</span>
+        <span class="status status-{{ sale.sale_type | lower }}" style="margin-left:4px">{{ sale.sale_type }}</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="thick">
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-box">
+      <div class="meta-label">Bill To</div>
+      <div class="meta-value">{{ sale.customer.name }}</div>
+      <div class="meta-sub">{{ sale.customer.customer_type }}</div>
+      {% if sale.customer.telephone %}
+      <div class="meta-sub">📞 {{ sale.customer.telephone }}</div>
+      {% endif %}
+    </div>
+    <div class="meta-box" style="text-align:right">
+      <div class="meta-label">Invoice Date</div>
+      <div class="meta-value">{{ sale.created_at | short_date }}</div>
+      {% if sale.due_date %}
+      <div class="meta-label" style="margin-top:10px">Due Date</div>
+      <div class="meta-value {% if sale.due_date < now %}text-danger{% endif %}">
+        {{ sale.due_date | short_date }}
+      </div>
+      {% endif %}
+      <div class="meta-label" style="margin-top:10px">Served By</div>
+      <div class="meta-sub">{{ sale.creator.name or sale.creator.username }}</div>
+    </div>
+  </div>
+
+  <hr class="thin">
+
+  <!-- Items -->
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;width:40%">Product</th>
+        <th>SKU</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td><strong>{{ item.product.name }}</strong></td>
+        <td>{{ item.product.sku }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unit_price | ugx }}</td>
+        <td>{{ item.line_total | ugx }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Totals -->
+  <div class="totals">
+    <div class="totals-box">
+      <div class="totals-row"><span>Subtotal</span><span>{{ sale.subtotal | ugx }}</span></div>
+      {% if sale.discount %}
+      <div class="totals-row"><span>Discount</span><span style="color:#dc2626">- {{ sale.discount | ugx }}</span></div>
+      {% endif %}
+      {% if sale.tax %}
+      <div class="totals-row"><span>Tax</span><span>{{ sale.tax | ugx }}</span></div>
+      {% endif %}
+      <div class="totals-row grand"><span>Grand Total</span><span>{{ sale.total_amount | ugx }}</span></div>
+      <div class="totals-row" style="color:#16a34a"><span>Amount Paid</span><span>{{ sale.amount_paid | ugx }}</span></div>
+      {% if sale.balance > 0 %}
+      <div class="totals-row balance"><span>Balance Due</span><span>{{ sale.balance | ugx }}</span></div>
+      {% else %}
+      <div class="totals-row" style="color:#16a34a;font-weight:600"><span>Balance Due</span><span>UGX 0 ✓</span></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Payments -->
+  {% if payments %}
+  <div class="payments-section">
+    <h4>Payments Received</h4>
+    {% for p in payments %}
+    <div class="pmt-row">
+      <span>{{ p.payment_method.name }} — {{ p.receipt_number }}
+        {% if p.reference_number %}(Ref: {{ p.reference_number }}){% endif %}
+        <span style="color:#94a3b8;font-size:11px"> · {{ p.created_at | short_date }}</span>
+      </span>
+      <span style="color:#16a34a;font-weight:600">{{ p.amount | ugx }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if sale.notes %}
+  <div style="font-size:12px;color:#64748b;margin-bottom:16px">
+    <strong>Notes:</strong> {{ sale.notes }}
+  </div>
+  {% endif %}
+
+  <div class="thankyou">
+    Thank you for your business! For any queries regarding this invoice, please quote
+    reference <strong>{{ sale.invoice_number }}</strong>.
+  </div>
+
+  <!-- Footer -->
+  <div class="inv-footer">
+    <div>{{ company_name }} · Buhweju District, Uganda</div>
+    <div>Printed: {{ now | short_dt }}</div>
+  </div>
+
+  <!-- Print bar -->
+  <div class="print-bar">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+
+</div>
+</body>
+</html>
