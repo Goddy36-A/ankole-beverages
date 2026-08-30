@@ -66,6 +66,23 @@ def index():
         if p:
             top_products.append({'product': p, 'qty': row.total_qty})
 
+    # 7-day sales trend for chart
+    trend_labels = []
+    trend_revenue = []
+    trend_count = []
+    for i in range(6, -1, -1):
+        day = now - timedelta(days=i)
+        day_start = datetime(day.year, day.month, day.day)
+        day_end   = datetime(day.year, day.month, day.day, 23, 59, 59)
+        day_sales = Sale.query.filter(
+            Sale.status == 'COMPLETED',
+            Sale.created_at >= day_start,
+            Sale.created_at <= day_end,
+        ).all()
+        trend_labels.append(day.strftime('%d %b'))
+        trend_revenue.append(sum(s.total_amount for s in day_sales))
+        trend_count.append(len(day_sales))
+
     return render_template('dashboard/index.html',
         total_products=total_products,
         stock_units=stock_units,
@@ -78,4 +95,7 @@ def index():
         recent_sales=recent_sales,
         recent_purchases=recent_purchases,
         top_products=top_products,
+        trend_labels=trend_labels,
+        trend_revenue=trend_revenue,
+        trend_count=trend_count,
     )

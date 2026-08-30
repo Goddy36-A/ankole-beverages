@@ -205,4 +205,87 @@
     </div>
   </div>
 </div>
+
+<!-- 7-Day Sales Trend Chart -->
+<div class="row g-4 mt-0">
+  <div class="col-lg-8">
+    <div class="table-card">
+      <div class="table-card-header"><i class="bi bi-graph-up text-primary me-2"></i>Sales Trend — Last 7 Days</div>
+      <div class="p-3">
+        <canvas id="salesChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="table-card h-100">
+      <div class="table-card-header"><i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions</div>
+      <div class="p-3 d-grid gap-2">
+        <a href="{{ url_for('sales.new_sale') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>New Sale</a>
+        <a href="{{ url_for('purchases.new_purchase') }}" class="btn btn-outline-success"><i class="bi bi-cart-plus me-2"></i>New Purchase Order</a>
+        <a href="{{ url_for('customers.new_customer') }}" class="btn btn-outline-secondary"><i class="bi bi-person-plus me-2"></i>New Customer</a>
+        <a href="{{ url_for('inventory.alerts') }}" class="btn btn-outline-warning"><i class="bi bi-exclamation-triangle me-2"></i>View Stock Alerts</a>
+        <a href="{{ url_for('reports.sales_report') }}" class="btn btn-outline-primary"><i class="bi bi-bar-chart me-2"></i>Sales Report</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('salesChart');
+if (ctx) {
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ trend_labels | tojson }},
+      datasets: [
+        {
+          label: 'Revenue (UGX)',
+          data: {{ trend_revenue | tojson }},
+          backgroundColor: 'rgba(3,94,54,.75)',
+          borderColor: '#025E36',
+          borderWidth: 1.5,
+          borderRadius: 4,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Sales Count',
+          data: {{ trend_count | tojson }},
+          type: 'line',
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,.12)',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.3,
+          yAxisID: 'y1',
+          fill: true,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.datasetIndex === 0)
+                return ' Revenue: UGX ' + ctx.parsed.y.toLocaleString();
+              return ' Sales: ' + ctx.parsed.y;
+            }
+          }
+        }
+      },
+      scales: {
+        y:  { position: 'left',  title: { display: true, text: 'Revenue (UGX)', font: { size: 11 } }, grid: { color: '#f1f5f9' } },
+        y1: { position: 'right', title: { display: true, text: 'Count', font: { size: 11 } }, grid: { drawOnChartArea: false } },
+      }
+    }
+  });
+}
+</script>
 {% endblock %}

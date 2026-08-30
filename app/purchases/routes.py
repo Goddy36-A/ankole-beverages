@@ -229,3 +229,19 @@ def create_return(id):
             flash(str(e), 'danger')
 
     return render_template('purchases/return_form.html', purchase=purchase, items=items)
+
+
+@purchases_bp.route('/<int:id>/print')
+@login_required
+@permission_required('purchases.view')
+def print_order(id):
+    purchase = Purchase.query.get_or_404(id)
+    items = PurchaseItem.query.filter_by(purchase_id=id).all()
+    from app.models.models import SystemSetting
+    from datetime import datetime
+    company = SystemSetting.query.filter_by(setting_key='company_name').first()
+    company_name = company.setting_value if company else 'Ankole Soft Drinks Ltd'
+    return render_template('purchases/print_order.html',
+        purchase=purchase, items=items,
+        company_name=company_name,
+        now=datetime.utcnow())

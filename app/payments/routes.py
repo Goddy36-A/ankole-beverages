@@ -98,3 +98,16 @@ def new_method():
             flash(f'Payment method "{name}" created.', 'success')
             return redirect(url_for('payments.methods'))
     return render_template('payments/method_form.html', method=None)
+
+
+@payments_bp.route('/receipt/<int:id>')
+@login_required
+@permission_required('payments.manage')
+def print_receipt(id):
+    from app.models.models import Payment as Pmt, SystemSetting
+    from datetime import datetime
+    pmt = Pmt.query.get_or_404(id)
+    company = SystemSetting.query.filter_by(setting_key='company_name').first()
+    company_name = company.setting_value if company else 'Ankole Soft Drinks Ltd'
+    return render_template('payments/print_receipt.html',
+        payment=pmt, company_name=company_name, now=datetime.utcnow())

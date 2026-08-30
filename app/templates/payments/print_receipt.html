@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Receipt {{ payment.receipt_number }}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #1e293b; }
+    .page { max-width: 400px; margin: 32px auto; padding: 28px; border: 2px solid #025E36; border-radius: 8px; }
+    .header { text-align: center; border-bottom: 2px solid #025E36; padding-bottom: 14px; margin-bottom: 16px; }
+    .company { font-size: 16px; font-weight: 700; color: #025E36; }
+    .co-sub  { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .receipt-label { font-size: 20px; font-weight: 800; color: #025E36; margin: 10px 0 2px; }
+    .receipt-num { font-size: 12px; color: #64748b; }
+    .row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 12.5px; border-bottom: 1px solid #f1f5f9; }
+    .row .lbl { color: #64748b; }
+    .row .val { font-weight: 600; }
+    .amount-box { text-align: center; background: #e8f4ee; border-radius: 6px; padding: 12px; margin: 14px 0; }
+    .amount-lbl { font-size: 11px; color: #025E36; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .amount-val { font-size: 26px; font-weight: 800; color: #025E36; }
+    .footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+    .thankyou { text-align: center; font-size: 12px; color: #025E36; font-weight: 600; margin: 12px 0 0; }
+    .print-bar { text-align: center; margin: 20px 0 0; }
+    .print-btn { background: #025E36; color: #fff; border: none; padding: 9px 24px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; }
+    .back-btn  { background: #f1f5f9; color: #1e293b; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; margin-right: 8px; }
+    @media print { .print-bar { display: none !important; } .page { border: 2px solid #025E36; margin: 0; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="company">{{ company_name }}</div>
+    <div class="co-sub">Buhweju District, Uganda</div>
+    <div class="receipt-label">PAYMENT RECEIPT</div>
+    <div class="receipt-num">{{ payment.receipt_number }}</div>
+  </div>
+
+  <div class="amount-box">
+    <div class="amount-lbl">Amount Received</div>
+    <div class="amount-val">{{ payment.amount | ugx }}</div>
+  </div>
+
+  <div class="row"><span class="lbl">Date</span><span class="val">{{ payment.created_at | short_dt }}</span></div>
+  <div class="row"><span class="lbl">Received From</span><span class="val">{{ payment.customer.name }}</span></div>
+  <div class="row"><span class="lbl">Invoice</span><span class="val">{{ payment.sale.invoice_number }}</span></div>
+  <div class="row"><span class="lbl">Payment Method</span><span class="val">{{ payment.payment_method.name }}</span></div>
+  {% if payment.reference_number %}
+  <div class="row"><span class="lbl">Reference #</span><span class="val">{{ payment.reference_number }}</span></div>
+  {% endif %}
+  <div class="row"><span class="lbl">Invoice Balance After</span>
+    <span class="val {% if payment.sale.balance > 0 %}text-danger{% endif %}">
+      {{ payment.sale.balance | ugx }}
+    </span>
+  </div>
+  <div class="row"><span class="lbl">Received By</span><span class="val">{{ payment.receiver.name or payment.receiver.username }}</span></div>
+
+  {% if payment.notes %}
+  <div style="font-size:11.5px;color:#64748b;margin-top:10px;padding:8px;background:#f8fafc;border-radius:4px">
+    <strong>Notes:</strong> {{ payment.notes }}
+  </div>
+  {% endif %}
+
+  <div class="thankyou">✓ Thank you — payment received</div>
+
+  <div class="footer">
+    {{ company_name }}<br>
+    Printed: {{ now | short_dt }}
+  </div>
+
+  <div class="print-bar">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <button class="print-btn" onclick="window.print()">🖨 Print Receipt</button>
+  </div>
+</div>
+</body>
+</html>

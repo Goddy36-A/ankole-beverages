@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block breadcrumb %}<li class="breadcrumb-item"><a href="{{ url_for('purchases.index') }}">Purchases</a></li><li class="breadcrumb-item active">{{ purchase.purchase_number }}</li>{% endblock %}
+{% block page_actions %}<a href="{{ url_for('purchases.print_order', id=purchase.id) }}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print PO</a>{% endblock %}
 
 {% block page_title %}PO: {{ purchase.purchase_number }}{% endblock %}
 {% block content %}
